@@ -12,5 +12,6 @@ router.put('/rejectMentorAppointment/:appointment_id', verifyToken, AppointmentC
 router.put('/confirmMentorAppointment/:appointment_id', verifyToken, AppointmentController.confirmMentorAppointment);
 router.get('/mentorUpcomingAppointments', verifyToken, AppointmentController.getMentorUpcomingAppointments);
 router.get('/menteeUpcomingAppointments', verifyToken, AppointmentController.getMenteeUpcomingAppointments);
+router.get('mentorPastAppointments', verifyToken, AppointmentController.getMentorPastAppointments);
 
 module.exports = router;

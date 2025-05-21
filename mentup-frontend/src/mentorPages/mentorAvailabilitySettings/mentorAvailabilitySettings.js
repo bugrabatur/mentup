@@ -30,13 +30,18 @@ const MentorAvailabilitySettings = () => {
   }, []);
 
   // Takvimden slotlar değiştikçe güncelle
+  // Sadece bugünden sonraki slotları al
+  // const handleSlotsChange = (updatedSlots) => {
+  //   const now = new Date();
+
+  //   const filtered = updatedSlots.filter(
+  //     (slot) => slot.start > now && slot.end > now
+  //   );
+  //   setSlots(filtered);
+  // };
+
   const handleSlotsChange = (updatedSlots) => {
-    const now = new Date();
-    // Sadece bugünden sonraki slotları al
-    const filtered = updatedSlots.filter(
-      (slot) => slot.start > now && slot.end > now
-    );
-    setSlots(filtered);
+    setSlots(updatedSlots);
   };
 
   // Kaydet butonuna basınca API'ye gönder

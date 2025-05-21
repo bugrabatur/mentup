@@ -51,7 +51,7 @@ const MentorReview = () => {
       <header></header>
       <main>
         <div className="mentor-review-form-div">
-          <h1 className="mentor-review-form-div-title">Mentor Değerlendirme</h1>
+          <h1 className="mentor-review-form-div-title">Mentor Değerlendirme Anketi</h1>
           <div className="mentor-review-form">
             <h2 className="mentor-review-form-title">
               Görüşmeniz hakkında geri bildirimde bulunun

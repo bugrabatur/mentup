@@ -94,7 +94,7 @@ const MentorAppointments = () => {
                         }}
                       >
                         {(!appt.mentee?.profile?.photo_url) && (
-                          <FontAwesomeIcon icon={faCircleUser} style={{ fontSize: 60, color: "#ccc" }} />
+                          <FontAwesomeIcon icon={faCircleUser} style={{ fontSize: 120, color: "#ccc" }} />
                         )}
                       </div>
                       <div className="mentor-appointments-info-content">

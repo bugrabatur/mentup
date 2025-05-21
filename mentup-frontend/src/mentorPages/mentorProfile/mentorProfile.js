@@ -138,11 +138,11 @@ const MentorProfile = () => {
     "İtalyanca", "Japonca", "Korece", "Portekizce", "Rusça", "Türkçe"
   ];
 
-  const industriesOptions = [
-    "Yazılım Geliştirme", "Web Teknolojileri", "Mobil Teknolojiler", "Oyun Geliştirme",
-    "Veritabanı ve Backend", "Yapay Zeka & Veri Bilimi", "Veri Analizi & BI",
-    "Tasarım & UI/UX", "Pazarlama & İş Geliştirme"
-  ];
+  // const industriesOptions = [
+  //   "Yazılım Geliştirme", "Web Teknolojileri", "Mobil Teknolojiler", "Oyun Geliştirme",
+  //   "Veritabanı ve Backend", "Yapay Zeka & Veri Bilimi", "Veri Analizi & BI",
+  //   "Tasarım & UI/UX", "Pazarlama & İş Geliştirme"
+  // ];
 
   useEffect(() => {
     const token = localStorage.getItem("token");
