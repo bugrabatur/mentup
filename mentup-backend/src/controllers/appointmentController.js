@@ -1,4 +1,5 @@
 const { Appointment, User, AvailabilitySlot } = require('../models');
+const { Op } = require("sequelize");
 
 // Görüşme talebi oluşturma
 exports.createAppointment = async (req, res) => {
@@ -94,7 +95,7 @@ exports.getMenteeAppointments = async (req, res) => {
 	const mentee_id = req.user.id; // Giriş yapan mentee'nin ID'si
 
 	const appointments = await Appointment.findAll({
-	  where: { mentee_id , status: 'pending' },
+	  where: { mentee_id },
 	  include: [
 		{ 
       model: User, 
@@ -255,5 +256,49 @@ exports.getMenteeUpcomingAppointments = async (req, res) => {
   } catch (err) {
     console.error('Planlanan görüşmeler alınamadı:', err);
     res.status(500).json({ message: 'Planlanan görüşmeler alınırken hata oluştu.' });
+  }
+};
+
+exports.getMentorPastAppointments = async (req, res) => {
+  try {
+    const mentor_id = req.user.id;
+    const now = new Date();
+
+    const appointments = await Appointment.findAll({
+      where: {
+        mentor_id,
+        status: "confirmed",
+        // Görüşmenin bitiş zamanı şu anın öncesinde olmalı
+        [Op.or]: [
+          {
+            scheduled_date: { [Op.lt]: now }, // Tarihi geçmiş
+          },
+          {
+            scheduled_date: { [Op.eq]: now.toISOString().slice(0, 10) }, // Bugünse
+            end_time: { [Op.lte]: now.toTimeString().slice(0, 5) }, // Saati geçmiş
+          }
+        ]
+      },
+      include: [
+        {
+          model: User,
+          as: 'mentee',
+          attributes: ['id', 'name', 'surname', 'email'],
+          include: [
+            {
+              model: require('../models').Profile,
+              as: 'profile',
+              attributes: ['bio', 'photo_url', 'skills'],
+            },
+          ],
+        },
+      ],
+      order: [['scheduled_date', 'DESC'], ['start_time', 'DESC']]
+    });
+
+    res.status(200).json(appointments);
+  } catch (err) {
+    console.error('Geçmiş görüşmeler alınamadı:', err);
+    res.status(500).json({ message: 'Geçmiş görüşmeler alınırken hata oluştu.' });
   }
 };

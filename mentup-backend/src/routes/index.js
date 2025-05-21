@@ -7,6 +7,7 @@ const adminPanelRoutes = require('./adminPanelRoutes');
 const userRoleRoutes = require('./userRoleRoutes');
 const mentorRoutes = require('./mentorRoutes');
 const availabilitySlotRoutes = require('./availabilitySlotRoutes');
+const mentorReviewRoutes = require('./mentorReviewRoutes');
 
 // Health-check
 router.get('/', (req, res) => {
@@ -24,8 +25,9 @@ router.use('/mentor/availability', availabilitySlotRoutes);
 
 router.use('/admin', adminPanelRoutes);
 
-// Kullanıcı rolleriyle ilgili işlemler
 router.use('/user-role', userRoleRoutes);
+
+router.use('/reviews', mentorReviewRoutes);
 
 
 

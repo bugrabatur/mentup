@@ -6,7 +6,9 @@ import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 
 const MentorAppointmentRequests = () => {
   const [requests, setRequests] = useState([]);
+  const [rejectedRequests, setRejectedRequests] = useState([]);
   const [modalReq, setModalReq] = useState(null);
+  const [showRejected, setShowRejected] = useState(false);
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -15,7 +17,7 @@ const MentorAppointmentRequests = () => {
         const res = await axios.get("http://localhost:5001/appointments/getMentorAppointmentRequest", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        // Sadece status'u 'pending' olanları göster
+        // Gelen talepler (pending)
         const filtered = res.data.filter(item => item.status === "pending");
         const formatted = filtered.map((item) => ({
           request_id: item.id,
@@ -36,8 +38,31 @@ const MentorAppointmentRequests = () => {
           meeting_reason: item.description,
         }));
         setRequests(formatted);
+
+        // Reddedilen talepler (rejected)
+        const rejected = res.data.filter(item => item.status === "rejected");
+        const rejectedFormatted = rejected.map((item) => ({
+          request_id: item.id,
+          mentee: {
+            name: item.mentee?.name || "",
+            surname: item.mentee?.surname || "",
+            skills: item.mentee?.profile?.skills
+              ? JSON.parse(item.mentee.profile.skills)
+              : [],
+            photo_url: item.mentee?.profile?.photo_url || "/images/mentee.png",
+            bio: item.mentee?.profile?.bio || "",
+          },
+          slot: {
+            date: item.scheduled_date,
+            start_time: item.start_time,
+            end_time: item.end_time,
+          },
+          meeting_reason: item.description,
+        }));
+        setRejectedRequests(rejectedFormatted);
       } catch (err) {
         setRequests([]);
+        setRejectedRequests([]);
       }
     };
     fetchRequests();
@@ -76,66 +101,129 @@ const MentorAppointmentRequests = () => {
     }
   };
 
+  // Slider mantığı
+  const handleSlider = () => setShowRejected((prev) => !prev);
+
   return (
     <div className="appointment-requests-container">
+      <div className="mentor-appointments-toggle-container">
+        <span className={`mentor-appointments-tab-span ${!showRejected ? "active" : ""}`}>Gelen Görüşme Talepleri</span>
+        <label className="mentor-appointments-switch">
+          <input type="checkbox" checked={showRejected} onChange={handleSlider} />
+          <span className="mentor-appointments-slider"></span>
+        </label>
+        <span className={`mentor-appointments-tab-span ${showRejected ? "active" : ""}`}>Reddedilen Görüşme Talepleri</span>
+      </div>
+
       <div className="appointment-requests-content-div">
-        <h1 className="appointment-requests-title">Gelen Görüşme Talepleri</h1>
+        <h1 className="appointment-requests-title">
+          {showRejected ? "Reddedilen Görüşme Talepleri" : "Gelen Görüşme Talepleri"}
+        </h1>
         <div className="appointment-requests-cards">
-          {requests.map((req) => (
-            <div
-              className="appointment-requests-card"
-              key={req.request_id}
-              onClick={() => openModal(req)}
-              style={{ cursor: "pointer" }}
-            >
-              <div
-                className="appointment-requests-image"
-                style={{
-                  backgroundImage: req.mentee.photo_url && req.mentee.photo_url !== "/images/mentee.png"
-                    ? `url(${req.mentee.photo_url})`
-                    : "none",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {(!req.mentee.photo_url || req.mentee.photo_url === "/images/mentee.png") && (
-                  <FontAwesomeIcon icon={faCircleUser} style={{ fontSize: 130, color: "#ccc" }} />
-                )}
-              </div>
-              <div className="appointment-requests-info-content">
-                <h2 className="appointment-requests-info-title">
-                  {req.meeting_reason || "Görüşme Sebebi Yok"}
-                </h2>
-                <h3 className="appointment-requests-name">
-                  {req.mentee.name} {req.mentee.surname}
-                </h3>
-                <div className="appointment-requests-description">
-                  <p>
-                    {new Date(req.slot.date).toLocaleDateString("tr-TR", {
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
-                      weekday: "long",
-                    })}
-                  </p>
-                  <p>
-                    {req.slot.start_time?.slice(0, 5)} - {req.slot.end_time?.slice(0, 5)}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-          {requests.length === 0 && (
-            <div style={{ color: "#fff", marginTop: "32px" }}>
-              Henüz görüşme talebi yok.
-            </div>
-          )}
+          {showRejected
+            ? (
+              rejectedRequests.length === 0
+                ? <div style={{ color: "#fff", marginTop: "32px" }}>Reddedilen görüşme talebi yok.</div>
+                : rejectedRequests.map((req) => (
+                  <div
+                    className="appointment-requests-card"
+                    key={req.request_id}
+                    style={{ cursor: "default", opacity: 0.7 }}
+                  >
+                    <div
+                      className="appointment-requests-image"
+                      style={{
+                        backgroundImage: req.mentee.photo_url && req.mentee.photo_url !== "/images/mentee.png"
+                          ? `url(${req.mentee.photo_url})`
+                          : "none",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {(!req.mentee.photo_url || req.mentee.photo_url === "/images/mentee.png") && (
+                        <FontAwesomeIcon icon={faCircleUser} style={{ fontSize: 130, color: "#ccc" }} />
+                      )}
+                    </div>
+                    <div className="appointment-requests-info-content">
+                      <h2 className="appointment-requests-info-title">
+                        {req.meeting_reason || "Görüşme Sebebi Yok"}
+                      </h2>
+                      <h3 className="appointment-requests-name">
+                        {req.mentee.name} {req.mentee.surname}
+                      </h3>
+                      <div className="appointment-requests-description">
+                        <p>
+                          {new Date(req.slot.date).toLocaleDateString("tr-TR", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric",
+                            weekday: "long",
+                          })}
+                        </p>
+                        <p>
+                          {req.slot.start_time?.slice(0, 5)} - {req.slot.end_time?.slice(0, 5)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+            )
+            : (
+              requests.length === 0
+                ? <div style={{ color: "#fff", marginTop: "32px" }}>Henüz görüşme talebi yok.</div>
+                : requests.map((req) => (
+                  <div
+                    className="appointment-requests-card"
+                    key={req.request_id}
+                    onClick={() => openModal(req)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div
+                      className="appointment-requests-image"
+                      style={{
+                        backgroundImage: req.mentee.photo_url && req.mentee.photo_url !== "/images/mentee.png"
+                          ? `url(${req.mentee.photo_url})`
+                          : "none",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {(!req.mentee.photo_url || req.mentee.photo_url === "/images/mentee.png") && (
+                        <FontAwesomeIcon icon={faCircleUser} style={{ fontSize: 130, color: "#ccc" }} />
+                      )}
+                    </div>
+                    <div className="appointment-requests-info-content">
+                      <h2 className="appointment-requests-info-title">
+                        {req.meeting_reason || "Görüşme Sebebi Yok"}
+                      </h2>
+                      <h3 className="appointment-requests-name">
+                        {req.mentee.name} {req.mentee.surname}
+                      </h3>
+                      <div className="appointment-requests-description">
+                        <p>
+                          {new Date(req.slot.date).toLocaleDateString("tr-TR", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric",
+                            weekday: "long",
+                          })}
+                        </p>
+                        <p>
+                          {req.slot.start_time?.slice(0, 5)} - {req.slot.end_time?.slice(0, 5)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+            )
+          }
         </div>
       </div>
 
       {/* MODAL */}
-      {modalReq && (
+      {!showRejected && modalReq && (
         <div
           className="mar-modal-overlay"
           onClick={(e) =>

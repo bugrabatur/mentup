@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Mentors.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
 
 const Mentors = () => {
   const [mentors, setMentors] = useState([]);
+  const [ratings, setRatings] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -14,6 +17,15 @@ const Mentors = () => {
       .catch(err => console.error("Mentorlar alınamadı:", err));
   }, []);
 
+  useEffect(() => {
+    mentors.forEach((mentor) => {
+      axios.get(`http://localhost:5001/reviews/mentor/${mentor.user_id}/averageRating`)
+        .then(res => {
+          setRatings(prev => ({ ...prev, [mentor.user_id]: res.data.rating }));
+        });
+    });
+  }, [mentors]);
+
   return (
     <div className='mentors-container'>
       <header></header>
@@ -22,7 +34,7 @@ const Mentors = () => {
           <h1 className='mentors-section-title'>Mentorlarımız</h1>
           <div className='mentor-cards'>
             {mentors.map((mentor) => (
-              <div className='mentor-card' key={mentor.user_id}>
+              <div className='mentor-card' key={mentor.user_id} style={{ position: "relative" }}>
                 <div
                   className='mentor-card-image'
                   style={{
@@ -30,9 +42,21 @@ const Mentors = () => {
                       ? `url(${mentor.profile.photo_url})`
                       : undefined,
                   }}
-                />
+                >
+                  {/* Sağ üst köşede rating */}
+                  {(
+                    <div className="mentor-card-rating">
+                      <FontAwesomeIcon icon={faStar} style={{ color: "#ff9800", marginRight: 4 }} />
+                      {ratings[mentor.user_id] !== null && ratings[mentor.user_id] !== undefined
+                        ? ratings[mentor.user_id]
+                        : "Ratingi yok"}
+                    </div>
+                  )}
+                </div>
                 <h2 className='mentor-name'>{mentor.name} {mentor.surname}</h2>
-                <p className='mentor-info'>{mentor.bio}</p>
+                <p className='mentor-info'>
+                  {mentor.bio ? mentor.bio : "Biyografi bulunamadı."}
+                </p>
                 <div className='mentor-industries-skills-div'>
                   <p className='mentor-industries'>
                     <strong>Beceri Alanları:</strong>{" "}

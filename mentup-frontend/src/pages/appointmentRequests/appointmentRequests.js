@@ -4,111 +4,190 @@ import "./appointmentRequests.css";
 
 const AppointmentRequests = () => {
   const [requests, setRequests] = useState([]);
+  const [rejectedRequests, setRejectedRequests] = useState([]);
   const [modalReq, setModalReq] = useState(null);
+  const [showRejected, setShowRejected] = useState(false);
 
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5001/appointments/getMenteeAppointmentRequest", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        // API'den gelen veriyi uygun formata dönüştür
-        const formatted = res.data.map((item) => ({
-          request_id: item.id,
-          mentor: {
-            name: item.mentor?.name || "",
-            surname: item.mentor?.surname || "",
-            photo_url: item.mentor?.profile?.photo_url || "/images/mentor.png",
-            skills: item.mentor?.profile?.skills
-              ? JSON.parse(item.mentor.profile.skills)
-              : [],
-            bio: item.mentor?.profile?.bio || "",
-          },
-          slot: {
-            date: item.scheduled_date,
-            start_time: item.start_time?.slice(0, 5),
-            end_time: item.end_time?.slice(0, 5),
-          },
-          meeting_reason: item.description,
-        }));
-        setRequests(formatted);
-      } catch (err) {
-        setRequests([]);
-      }
-    };
-    fetchRequests();
-  }, []);
+useEffect(() => {
+  const fetchRequests = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get("http://localhost:5001/appointments/getMenteeAppointmentRequest", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Yaptığım talepler (sadece pending)
+      const filtered = res.data.filter(item => item.status === "pending");
+      const formatted = filtered.map((item) => ({
+        request_id: item.id,
+        mentor: {
+          name: item.mentor?.name || "",
+          surname: item.mentor?.surname || "",
+          photo_url: item.mentor?.profile?.photo_url || "/images/mentor.png",
+          skills: item.mentor?.profile?.skills
+            ? JSON.parse(item.mentor.profile.skills)
+            : [],
+          bio: item.mentor?.profile?.bio || "",
+        },
+        slot: {
+          date: item.scheduled_date,
+          start_time: item.start_time?.slice(0, 5),
+          end_time: item.end_time?.slice(0, 5),
+        },
+        meeting_reason: item.description,
+        status: item.status,
+      }));
+      setRequests(formatted);
+
+      // Reddedilen talepler
+      const rejected = res.data.filter(item => item.status === "rejected");
+      const rejectedFormatted = rejected.map((item) => ({
+        request_id: item.id,
+        mentor: {
+          name: item.mentor?.name || "",
+          surname: item.mentor?.surname || "",
+          photo_url: item.mentor?.profile?.photo_url || "/images/mentor.png",
+          skills: item.mentor?.profile?.skills
+            ? JSON.parse(item.mentor.profile.skills)
+            : [],
+          bio: item.mentor?.profile?.bio || "",
+        },
+        slot: {
+          date: item.scheduled_date,
+          start_time: item.start_time?.slice(0, 5),
+          end_time: item.end_time?.slice(0, 5),
+        },
+        meeting_reason: item.description,
+      }));
+      setRejectedRequests(rejectedFormatted); // <-- Bunu eklemen gerekiyor!
+    } catch (err) {
+      setRequests([]);
+      setRejectedRequests([]);
+    }
+  };
+  fetchRequests();
+}, []);
 
   const handleCancelRequest = async (request_id) => {
-  try {
-    const token = localStorage.getItem("token");
-    await axios.put(
-      `http://localhost:5001/appointments/cancelMenteeAppointment/${request_id}`,
-      {},
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    setRequests((prev) => prev.filter((r) => r.request_id !== request_id));
-    setModalReq(null);
-  } catch (err) {
-    alert("Talep iptal edilemedi.");
-  }
-};
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:5001/appointments/cancelMenteeAppointment/${request_id}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setRequests((prev) => prev.filter((r) => r.request_id !== request_id));
+      setModalReq(null);
+    } catch (err) {
+      alert("Talep iptal edilemedi.");
+    }
+  };
 
   const openModal = (req) => setModalReq(req);
   const closeModal = () => setModalReq(null);
 
+  // Slider mantığı
+  const handleSlider = () => setShowRejected((prev) => !prev);
+
   return (
     <div className="appointment-requests-container">
+      <div className="mentor-appointments-toggle-container">
+        <span className={`mentor-appointments-tab-span ${!showRejected ? "active" : ""}`}>Yaptığım Görüşme Talepleri</span>
+        <label className="mentor-appointments-switch">
+          <input type="checkbox" checked={showRejected} onChange={handleSlider} />
+          <span className="mentor-appointments-slider"></span>
+        </label>
+        <span className={`mentor-appointments-tab-span ${showRejected ? "active" : ""}`}>Reddedilen Görüşme Talepleri</span>
+      </div>
       <div className="appointment-requests-content-div">
-        <h1 className="appointment-requests-title">Yaptığım Görüşme Talepleri</h1>
+        <h1 className="appointment-requests-title">
+          {showRejected ? "Reddedilen Görüşme Talepleri" : "Yaptığım Görüşme Talepleri"}
+        </h1>
         <div className="appointment-requests-cards">
-          {requests.map((req) => (
-            <div
-              className="appointment-requests-card"
-              key={req.request_id}
-              onClick={() => openModal(req)}
-              style={{ cursor: "pointer" }}
-            >
-              <div
-                className="appointment-requests-image"
-                style={{
-                  backgroundImage: `url(${req.mentor.photo_url || "/images/mentor.png"})`,
-                }}
-              ></div>
-              <div className="appointment-requests-info-content">
-                <h2 className="appointment-requests-info-title">
-                  {req.meeting_reason || "Görüşme Sebebi Yok"}
-                </h2>
-                <h3 className="appointment-requests-name">
-                  {req.mentor.name} {req.mentor.surname}
-                </h3>
-                <div className="appointment-requests-description">
-                  <p>
-                    {new Date(req.slot.date).toLocaleDateString("tr-TR", {
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
-                      weekday: "long",
-                    })}
-                  </p>
-                  <p>
-                    {req.slot.start_time} - {req.slot.end_time}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-          {requests.length === 0 && (
-            <div style={{ color: "#fff", marginTop: "32px" }}>
-              Henüz görüşme talebiniz yok.
-            </div>
-          )}
+          {showRejected
+            ? (
+              rejectedRequests.length === 0
+                ? <div style={{ color: "#fff", marginTop: "32px" }}>Reddedilen görüşme talebiniz yok.</div>
+                : rejectedRequests.map((req) => (
+                  <div
+                    className="appointment-requests-card"
+                    key={req.request_id}
+                    style={{ cursor: "default", opacity: 0.7 }}
+                  >
+                    <div
+                      className="appointment-requests-image"
+                      style={{
+                        backgroundImage: `url(${req.mentor.photo_url || "/images/mentor.png"})`,
+                      }}
+                    ></div>
+                    <div className="appointment-requests-info-content">
+                      <h2 className="appointment-requests-info-title">
+                        {req.meeting_reason || "Görüşme Sebebi Yok"}
+                      </h2>
+                      <h3 className="appointment-requests-name">
+                        {req.mentor.name} {req.mentor.surname}
+                      </h3>
+                      <div className="appointment-requests-description">
+                        <p>
+                          {new Date(req.slot.date).toLocaleDateString("tr-TR", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric",
+                            weekday: "long",
+                          })}
+                        </p>
+                        <p>
+                          {req.slot.start_time} - {req.slot.end_time}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+            )
+            : (
+              requests.length === 0
+                ? <div style={{ color: "#fff", marginTop: "32px" }}>Henüz görüşme talebiniz yok.</div>
+                : requests.map((req) => (
+                  <div
+                    className="appointment-requests-card"
+                    key={req.request_id}
+                    onClick={() => openModal(req)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div
+                      className="appointment-requests-image"
+                      style={{
+                        backgroundImage: `url(${req.mentor.photo_url || "/images/mentor.png"})`,
+                      }}
+                    ></div>
+                    <div className="appointment-requests-info-content">
+                      <h2 className="appointment-requests-info-title">
+                        {req.meeting_reason || "Görüşme Sebebi Yok"}
+                      </h2>
+                      <h3 className="appointment-requests-name">
+                        {req.mentor.name} {req.mentor.surname}
+                      </h3>
+                      <div className="appointment-requests-description">
+                        <p>
+                          {new Date(req.slot.date).toLocaleDateString("tr-TR", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric",
+                            weekday: "long",
+                          })}
+                        </p>
+                        <p>
+                          {req.slot.start_time} - {req.slot.end_time}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+            )
+          }
         </div>
       </div>
-
       {/* MODAL */}
-      {modalReq && (
+      {!showRejected && modalReq && (
         <div
           className="mar-modal-overlay"
           onClick={(e) =>

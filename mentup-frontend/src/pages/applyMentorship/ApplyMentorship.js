@@ -76,7 +76,6 @@ const ApplyMentorship = () => {
     "Yapay Zeka & Veri Bilimi",
     "Veri Analizi & BI",
     "Tasarım & UI/UX",
-    "Pazarlama & İş Geliştirme",
   ];
 
   const SkillOptions = [
