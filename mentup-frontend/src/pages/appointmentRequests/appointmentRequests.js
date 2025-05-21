@@ -1,25 +1,59 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "./appointmentRequests.css";
 
 const AppointmentRequests = () => {
-  const [requests] = useState([
-    {
-      request_id: 1,
-      mentor: {
-        name: "Mehmet",
-        surname: "Demir",
-        skills: ["Java", "React"],
-        photo_url: "/images/mentor.png"
-      },
-      slot: {
-        date: "2025-05-28",
-        start_time: "20:00",
-        end_time: "20:30"
-      },
-      meeting_reason: "Frontend geliştirme üzerine konuşmak istiyorum."
-    }
-  ]);
+  const [requests, setRequests] = useState([]);
   const [modalReq, setModalReq] = useState(null);
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("http://localhost:5001/appointments/getMenteeAppointmentRequest", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        // API'den gelen veriyi uygun formata dönüştür
+        const formatted = res.data.map((item) => ({
+          request_id: item.id,
+          mentor: {
+            name: item.mentor?.name || "",
+            surname: item.mentor?.surname || "",
+            photo_url: item.mentor?.profile?.photo_url || "/images/mentor.png",
+            skills: item.mentor?.profile?.skills
+              ? JSON.parse(item.mentor.profile.skills)
+              : [],
+            bio: item.mentor?.profile?.bio || "",
+          },
+          slot: {
+            date: item.scheduled_date,
+            start_time: item.start_time?.slice(0, 5),
+            end_time: item.end_time?.slice(0, 5),
+          },
+          meeting_reason: item.description,
+        }));
+        setRequests(formatted);
+      } catch (err) {
+        setRequests([]);
+      }
+    };
+    fetchRequests();
+  }, []);
+
+  const handleCancelRequest = async (request_id) => {
+  try {
+    const token = localStorage.getItem("token");
+    await axios.put(
+      `http://localhost:5001/appointments/cancelMenteeAppointment/${request_id}`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setRequests((prev) => prev.filter((r) => r.request_id !== request_id));
+    setModalReq(null);
+  } catch (err) {
+    alert("Talep iptal edilemedi.");
+  }
+};
 
   const openModal = (req) => setModalReq(req);
   const closeModal = () => setModalReq(null);
@@ -65,6 +99,11 @@ const AppointmentRequests = () => {
               </div>
             </div>
           ))}
+          {requests.length === 0 && (
+            <div style={{ color: "#fff", marginTop: "32px" }}>
+              Henüz görüşme talebiniz yok.
+            </div>
+          )}
         </div>
       </div>
 
@@ -93,7 +132,7 @@ const AppointmentRequests = () => {
               <label>Biyografi</label>
               <input
                 className="mar-modal-text"
-                value={"10 yıllık tecrübeli bir frontend geliştirici."}
+                value={modalReq.mentor.bio || "Biyografi bulunamadı."}
                 readOnly
                 style={{ background: "#232323", color: "#fff", border: "1px solid #444" }}
               />
@@ -101,7 +140,9 @@ const AppointmentRequests = () => {
             <div className="mar-modal-form-item">
               <label>Yazılım Dilleri</label>
               <p className="mar-modal-text">
-                {modalReq.mentor.skills?.join(", ")}
+                {modalReq.mentor.skills?.length
+                  ? modalReq.mentor.skills.join(", ")
+                  : "Yazılım dilleri bulunamadı."}
               </p>
             </div>
             <div className="mar-modal-form-item">
@@ -126,10 +167,7 @@ const AppointmentRequests = () => {
             <div className="mentee-appointment-requests-modal-cancel-row">
               <button
                 className="mentee-appointment-requests-modal-cancel-button"
-                onClick={() => {
-                  // Buraya iptal işlemini ekleyebilirsin
-                  closeModal();
-                }}
+                onClick={() => handleCancelRequest(modalReq.request_id)}
               >
                 Talebimi İptal Et
               </button>

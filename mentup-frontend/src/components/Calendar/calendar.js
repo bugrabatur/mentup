@@ -50,7 +50,8 @@ const Calendar = ({ slots = [], onSlotsChange }) => {
   const handleToday = () => setCurrentMonday(getMondayOfWeek(new Date()));
 
   // Slot seçme
-  const handleCellClick = (dayIdx, hour) => {
+  const handleCellClick = (dayIdx, hour, isPast) => {
+    if (isPast) return; // Geçmiş slotlara tıklanamaz
     const date = addDays(currentMonday, dayIdx);
     const start = new Date(date);
     start.setHours(hour, 0, 0, 0);
@@ -135,6 +136,12 @@ const Calendar = ({ slots = [], onSlotsChange }) => {
                   dayIdx === todayIdx &&
                   hour === today.getHours();
 
+                // Geçmiş slot kontrolü
+                const slotDate = addDays(currentMonday, dayIdx);
+                const slotStart = new Date(slotDate);
+                slotStart.setHours(hour, 0, 0, 0);
+                const isPast = slotStart < new Date();
+
                 let content = null;
                 if (selected) {
                   content = (
@@ -150,10 +157,17 @@ const Calendar = ({ slots = [], onSlotsChange }) => {
                     className={[
                       selected ? "selected" : "",
                       dayIdx === todayIdx ? "today-column" : "",
-                      isNow ? "now-cell" : ""
+                      isNow ? "now-cell" : "",
+                      isPast ? "disabled-slot" : ""
                     ].join(" ")}
-                    onClick={() => handleCellClick(dayIdx, hour)}
-                    style={{ cursor: "pointer", position: "relative", padding: 0 }}
+                    onClick={() => handleCellClick(dayIdx, hour, isPast)}
+                    style={{
+                      cursor: isPast ? "not-allowed" : "pointer",
+                      position: "relative",
+                      padding: 0,
+                      background: isPast ? "#eee" : undefined,
+                      color: isPast ? "#aaa" : undefined
+                    }}
                   >
                     {content}
                   </td>

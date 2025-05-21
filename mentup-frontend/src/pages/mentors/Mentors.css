@@ -79,3 +79,16 @@ html, body {
   color: #8e9291;
   text-align: center;
 }
+
+.mentor-industries-skills-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px
+}
+
+.mentor-industries,
+.mentor-skills {
+  color: #8e9291;
+}

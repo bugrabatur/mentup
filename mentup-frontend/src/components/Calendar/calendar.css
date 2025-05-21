@@ -120,3 +120,9 @@
 .now-cell {
   background-color: #3c3c3c !important; /* Sarımsı veya istediğin bir renk */
 }
+
+.disabled-slot {
+  background: #360000 !important; /* Açık kırmızı, göz yormaz */
+  color: #aaa !important;
+  cursor: not-allowed !important;
+}

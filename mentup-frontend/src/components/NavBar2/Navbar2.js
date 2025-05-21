@@ -85,7 +85,7 @@ const NavBar2 = () => {
             <a href="/browsementors">Mentorlara Göz At</a>
             <a href="/mentors">Mentorlarımız</a>
             <a href="/appointments">Görüşmelerim</a>
-            <a href="/appointmentrequests">Görüşmele Taleplerim</a>
+            <a href="/appointmentrequests">Görüşme Taleplerim</a>
             <a href="/contact">İletişim</a>
             <a href="/aboutus">Hakkımızda</a>
           </div>

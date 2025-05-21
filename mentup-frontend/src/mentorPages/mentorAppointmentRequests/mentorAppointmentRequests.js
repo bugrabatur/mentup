@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./mentorAppointmentRequests.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 
 const MentorAppointmentRequests = () => {
   const [requests, setRequests] = useState([]);
@@ -13,8 +15,9 @@ const MentorAppointmentRequests = () => {
         const res = await axios.get("http://localhost:5001/appointments/getMentorAppointmentRequest", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        // API'den gelen veriyi uygun formata dönüştür
-        const formatted = res.data.map((item) => ({
+        // Sadece status'u 'pending' olanları göster
+        const filtered = res.data.filter(item => item.status === "pending");
+        const formatted = filtered.map((item) => ({
           request_id: item.id,
           mentee: {
             name: item.mentee?.name || "",
@@ -43,14 +46,34 @@ const MentorAppointmentRequests = () => {
   const openModal = (req) => setModalReq(req);
   const closeModal = () => setModalReq(null);
 
-  const handleApprove = (requestId) => {
-    // Onayla işlemi (backend'e istek atılabilir)
-    closeModal();
+  const handleApprove = async (requestId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:5001/appointments/confirmMentorAppointment/${requestId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setRequests((prev) => prev.filter((r) => r.request_id !== requestId));
+      setModalReq(null);
+    } catch (err) {
+      alert("Talep onaylanamadı.");
+    }
   };
 
-  const handleReject = (requestId) => {
-    // Reddet işlemi (backend'e istek atılabilir)
-    closeModal();
+  const handleReject = async (requestId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:5001/appointments/rejectMentorAppointment/${requestId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setRequests((prev) => prev.filter((r) => r.request_id !== requestId));
+      setModalReq(null);
+    } catch (err) {
+      alert("Talep reddedilemedi.");
+    }
   };
 
   return (
@@ -68,11 +91,18 @@ const MentorAppointmentRequests = () => {
               <div
                 className="appointment-requests-image"
                 style={{
-                  backgroundImage: `url(${
-                    req.mentee.photo_url || "/images/mentee.png"
-                  })`,
+                  backgroundImage: req.mentee.photo_url && req.mentee.photo_url !== "/images/mentee.png"
+                    ? `url(${req.mentee.photo_url})`
+                    : "none",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
-              ></div>
+              >
+                {(!req.mentee.photo_url || req.mentee.photo_url === "/images/mentee.png") && (
+                  <FontAwesomeIcon icon={faCircleUser} style={{ fontSize: 130, color: "#ccc" }} />
+                )}
+              </div>
               <div className="appointment-requests-info-content">
                 <h2 className="appointment-requests-info-title">
                   {req.meeting_reason || "Görüşme Sebebi Yok"}

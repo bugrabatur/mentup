@@ -147,16 +147,54 @@ const BrowseMentors = () => {
       });
   }, []);
 
-  // Arama kutusuna yazıldıkça filtrele
-  const handleSearchInput = (e) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    const filtered = allMentors.filter(
-      (mentor) =>
-        mentor.name.toLowerCase().includes(value.toLowerCase()) ||
-        mentor.surname.toLowerCase().includes(value.toLowerCase())
-    );
+  // Dropdown veya arama değişince mentorları filtrele
+  useEffect(() => {
+    let filtered = allMentors;
+
+    // İsim araması
+    if (searchTerm.trim()) {
+      filtered = filtered.filter((mentor) => {
+        const fullName = `${mentor.name} ${mentor.surname}`.toLowerCase();
+        return (
+          mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          mentor.surname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          fullName.includes(searchTerm.toLowerCase())
+        );
+      });
+    }
+
+    // Beceri alanı (industries) filtresi
+    if (selectedSkills.length > 0) {
+      filtered = filtered.filter((mentor) => {
+        if (!mentor.industries) return false;
+        try {
+          const industries = JSON.parse(mentor.industries);
+          return selectedSkills.some((skill) => industries.includes(skill));
+        } catch {
+          return false;
+        }
+      });
+    }
+
+    // Yazılım dilleri (skills) filtresi
+    if (selectedLanguages.length > 0) {
+      filtered = filtered.filter((mentor) => {
+        if (!mentor.skills) return false;
+        try {
+          const skills = JSON.parse(mentor.skills);
+          return selectedLanguages.some((lang) => skills.includes(lang));
+        } catch {
+          return false;
+        }
+      });
+    }
+
     setMentors(filtered);
+  }, [searchTerm, selectedSkills, selectedLanguages, allMentors]);
+
+  // Arama kutusuna yazıldıkça searchTerm güncellenir
+  const handleSearchInput = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   const handleSearch = () => {};
@@ -241,7 +279,7 @@ const BrowseMentors = () => {
               <div className="browse-mentors-search-input-wrapper">
                 <input
                   type="text"
-                  placeholder="Ada veya anahtar kelimeye göre arama yapın"
+                  placeholder="İsme göre arama yapın"
                   value={searchTerm}
                   onChange={handleSearchInput}
                 />
@@ -318,17 +356,19 @@ const BrowseMentors = () => {
                     ></div>
                     <div className="mentor-info">
                       <h3>{mentor.name} {mentor.surname}</h3>
-                      <p className="mentor-title">
-                        {mentor.industries
-                          ? JSON.parse(mentor.industries).join(", ")
-                          : ""}
-                      </p>
-                      <p className="mentor-title">
-                        {mentor.skills
-                          ? JSON.parse(mentor.skills).join(", ")
-                          : ""}
-                      </p>
-                      <p className="mentor-description">{mentor.bio || "Kısa biyografi: 5 yıldır yazılım geliştiren, mentorluk yapmayı seven biriyim."}</p>
+                      <div className="mentor-info-industries-skills-div">
+                        <p className="mentor-title">
+                          {mentor.industries
+                            ? JSON.parse(mentor.industries).join(", ")
+                            : "Beceri alanları bulunamadı."}
+                        </p>
+                        <p className="mentor-title">
+                          {mentor.skills
+                            ? JSON.parse(mentor.skills).join(", ")
+                            : "Yazılım dilleri bulunamadı."}
+                        </p>
+                        </div>
+                      <p className="mentor-description">{mentor.bio || "Biyografi bulunamadı."}</p>
                     </div>
                     <div className="mentor-actions">
                       <div className="browse-mentors-mentor-buttons">

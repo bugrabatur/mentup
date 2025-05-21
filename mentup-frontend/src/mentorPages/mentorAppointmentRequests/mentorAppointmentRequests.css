@@ -4,7 +4,7 @@
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  
   margin: 0;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   overflow-y: auto;
 }
 
@@ -18,15 +18,16 @@
 .appointment-requests-title {
   font-size: 28px;
   color: #fff;
-  margin-left: 40px;
+  margin-left: 60px;
   margin-top: 40px;
 }
 
 .appointment-requests-cards {
   display: flex;
   flex-direction: column;
-  margin-left: 40px;
+  margin-left: 60px;
   margin-top: 20px ;
+  margin-bottom: 60px;
 }
 
 .appointment-requests-card {
@@ -36,7 +37,7 @@
   align-items: center;
   margin-bottom: 20px;
   width: 45%;
-  height: 200px;
+  height: 120px;
   background-color: #171717;
   border: 1px solid rgb(59, 59, 59);
   border-radius: 10px;
@@ -45,8 +46,8 @@
 }
 
 .appointment-requests-image {
-  width: 160px;
-  height: 160px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
   background-image: url('../../images/mentor.png');
   background-size: cover;
