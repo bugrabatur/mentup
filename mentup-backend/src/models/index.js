@@ -30,12 +30,18 @@ db.User = require('./User')(sequelize, DataTypes); // EN SON
 db.Mentor = require('./mentors')(sequelize, DataTypes); // 🟢 Bunu EKLE
 const AvailabilitySlot = require('./availabilitySlot')(sequelize, DataTypes);
 db.AvailabilitySlot = AvailabilitySlot;
+db.ChatRoom = require('./chatroom')(sequelize, DataTypes);
+db.ChatRoomUser = require('./chatroomuser')(sequelize, DataTypes);
+db.DirectMessage = require('./directmessage')(sequelize, DataTypes);
+
+// models/index.js içinde:
+
 
 // 🔴 EN SON User gelsin çünkü diğerlerine bağlı
 db.User = require('./User')(sequelize, DataTypes);
 
 // İlişkileri çalıştır
-Object.keys(db).forEach(modelName => {
+Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }

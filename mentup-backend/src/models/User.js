@@ -42,16 +42,28 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'mentee_id',
         as: 'MenteeAppointments',
       });
-  
-      User.hasMany(models.Message, {
-        foreignKey: 'sender_id',
-        as: 'sentMessages',
-      });
-  
+
       User.hasMany(models.Document, {
         foreignKey: 'user_id',
         as: 'documents',
       });
+
+      // User <-> ChatRoom (many-to-many)
+      User.belongsToMany(models.ChatRoom, {
+        through: 'chatroom_users',
+        foreignKey: 'user_id',
+        otherKey: 'chatroom_id',
+        as: 'chatrooms',
+        onDelete: 'CASCADE'
+      });
+
+      // User -> SentMessages (1-N)
+      User.hasMany(models.DirectMessage, {
+        foreignKey: 'sender_id',
+        as: 'sentMessages',
+        onDelete: 'CASCADE'
+      });
+
     };
   
     return User;
