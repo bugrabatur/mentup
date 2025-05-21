@@ -1,4 +1,4 @@
-const { User, Profile } = require('../models');
+const { User, Profile, Document } = require('../models');
 
 // Kullanıcının kendi profilini getir
 exports.getOwnProfile = async (req, res) => {
@@ -12,6 +12,12 @@ exports.getOwnProfile = async (req, res) => {
             model: Profile,
             as: 'profile',
             attributes: ['user_id', 'bio', 'photo_url', 'phone', 'verification_status', 'college', 'location', 'skills', 'languages'],
+            required: false
+          },
+          {
+            model: Document,
+            as: 'documents',
+            attributes: ['industries'],
             required: false
           }
         ]

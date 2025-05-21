@@ -229,3 +229,31 @@ exports.getMentorUpcomingAppointments = async (req, res) => {
     res.status(500).json({ message: 'Planlanan görüşmeler alınırken hata oluştu.' });
   }
 };
+
+exports.getMenteeUpcomingAppointments = async (req, res) => {
+  try {
+    const mentee_id = req.user.id;
+    const appointments = await Appointment.findAll({
+      where: { mentee_id, status: "confirmed" },
+      include: [
+        {
+          model: User,
+          as: 'mentor',
+          attributes: ['id', 'name', 'surname', 'email'],
+          include: [
+            {
+              model: require('../models').Profile,
+              as: 'profile',
+              attributes: ['bio', 'photo_url', 'skills'],
+            },
+          ],
+        },
+      ],
+      order: [['scheduled_date', 'ASC'], ['start_time', 'ASC']]
+    });
+    res.status(200).json(appointments);
+  } catch (err) {
+    console.error('Planlanan görüşmeler alınamadı:', err);
+    res.status(500).json({ message: 'Planlanan görüşmeler alınırken hata oluştu.' });
+  }
+};

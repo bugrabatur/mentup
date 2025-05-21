@@ -1,20 +1,54 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Appointments.css';
 
 const Appointments = () => {
   const navigate = useNavigate();
-  const [isUpcoming, setIsUpcoming] = React.useState(true); // Görüşme durumu
+  const [isUpcoming, setIsUpcoming] = React.useState(true);
+  const [upcomingAppointments, setUpcomingAppointments] = useState([]);
+  const [pastAppointments, setPastAppointments] = useState([]);
 
-  const toggleView = () => {
-    setIsUpcoming(!isUpcoming); // Görüşme durumunu değiştir
-  };
+  // Planlanan görüşmeleri çek
+  useEffect(() => {
+    const fetchUpcoming = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(
+          "http://localhost:5001/appointments/menteeUpcomingAppointments",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const data = await res.json();
+        setUpcomingAppointments(data);
+      } catch {
+        setUpcomingAppointments([]);
+      }
+    };
+    fetchUpcoming();
+  }, []);
+
+  // Geçmiş görüşmeleri çek
+  useEffect(() => {
+    const fetchPast = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(
+          "http://localhost:5001/appointments/menteePastAppointments",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const data = await res.json();
+        setPastAppointments(data);
+      } catch {
+        setPastAppointments([]);
+      }
+    };
+    fetchPast();
+  }, []);
 
   const handleJoinMeeting = () => {
     navigate('/videochat');
   };
 
-  const handleReviewClick = () => {
+  const handleReviewClick = (appointmentId) => {
     navigate('/mentorreview');
   };
 
@@ -51,71 +85,105 @@ const Appointments = () => {
           <div className='appointment-content-div'>
             <h1>Planlanan Görüşmelerim</h1>
             <div className="appointment-form">
-              <h2 className="appointment-date-title">Mayıs, 2025</h2>
-              <div className="appointment-cards">
-                <div className="appointment-card">
-                  <div className="appointment-image"></div>
-                  <div className="appointment-info-content">
-                    <h3 className="appointment-title">
-                      Yeni Web Sitemin Tasarımını Geliştirme
-                    </h3>
-                    <div className="appointment-mentor-details">
-                      <p className="appointment-name">William Johnson</p>
-                      <p className="appointment-job">Web Tasarımcı</p>
+              {upcomingAppointments.length === 0 ? (
+                <div style={{ color: "#fff", marginTop: "32px" }}>Planlanan görüşme yok.</div>
+              ) : (
+                <div className="appointment-cards">
+                  {upcomingAppointments.map((appt) => (
+                    <div className="appointment-card" key={appt.id}>
+                      <div
+                        className="appointment-image"
+                        style={{
+                          backgroundImage: appt.mentor?.profile?.photo_url
+                            ? `url(${appt.mentor.profile.photo_url})`
+                            : "none",
+                        }}
+                      ></div>
+                      <div className="appointment-info-content">
+                        <h3 className="appointment-title">
+                          {appt.description || "Görüşme"}
+                        </h3>
+                        <div className="appointment-mentor-details">
+                          <p className="appointment-name">
+                            {appt.mentor?.name} {appt.mentor?.surname}
+                          </p>
+                        </div>
+                        <div className="appointment-description">
+                          <p className="appointment-date">
+                            {new Date(appt.scheduled_date).toLocaleDateString("tr-TR", {
+                              day: "2-digit",
+                              month: "long",
+                              year: "numeric",
+                              weekday: "long",
+                            })}, {appt.start_time?.slice(0, 5)}-{appt.end_time?.slice(0, 5)}
+                          </p>
+                        </div>
+                        <div className="appointment-button-div">
+                          <button className="message-button">Mesaj At</button>
+                          <button
+                            className="appointment-button"
+                            onClick={handleJoinMeeting}
+                          >
+                            Görüntülü Görüşmeye Katıl
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                    <div className="appointment-description">
-                      <p className="appointment-date">
-                        25 Mayıs, Cumartesi, 19.00-19.30
-                      </p>
-                      <p className="appointment-time">30 dakika</p>
-                    </div>
-                      <div className="appointment-button-div">
-                        <button className="message-button">Mesaj At</button>
-                        <button
-                          className="appointment-button"
-                          onClick={handleJoinMeeting}
-                        >
-                          Görüntülü Görüşmeye Katıl
-                        </button>
-                      </div>  
-                  </div>
+                  ))}
                 </div>
-              </div>
+              )}
             </div>
           </div>
         ) : (
           <div>
             <h1>Geçmiş Görüşmelerim</h1>
             <div className="appointment-form">
-              <h2 className="appointment-date-title">Mart, 2025</h2>
-              <div className="appointment-cards">
-                <div className="appointment-card">
-                  <div className="appointment-image"></div>
-                  <div className="appointment-info-content">
-                    <h3 className="appointment-title">
-                      Mobil oyunumun tasarımını geliştirme
-                    </h3>
-                    <div className="appointment-mentor-details">
-                      <p className="appointment-name">Kyrie Irving</p>
-                      <p className="appointment-job">Mobil Geliştirici</p>
-                    </div>
-                    <div className="appointment-description">
-                      <p className="appointment-date">
-                        14 Mart, Cuma, 18.00-18.30
-                      </p>
-                      <p className="appointment-time">30 dakika</p>
-                    </div>
-                      <div className="appointment-button-div">
-                        <button
-                          className="appointment-review-button"
-                          onClick={handleReviewClick}
-                        >
-                          Görüşmeyi Değerlendir
-                        </button>
+              {pastAppointments.length === 0 ? (
+                <div style={{ color: "#fff", marginTop: "32px" }}>Geçmiş görüşme yok.</div>
+              ) : (
+                <div className="appointment-cards">
+                  {pastAppointments.map((appt) => (
+                    <div className="appointment-card" key={appt.id}>
+                      <div
+                        className="appointment-image"
+                        style={{
+                          backgroundImage: appt.mentor?.profile?.photo_url
+                            ? `url(${appt.mentor.profile.photo_url})`
+                            : "none",
+                        }}
+                      ></div>
+                      <div className="appointment-info-content">
+                        <h3 className="appointment-title">
+                          {appt.description || "Görüşme"}
+                        </h3>
+                        <div className="appointment-mentor-details">
+                          <p className="appointment-name">
+                            {appt.mentor?.name} {appt.mentor?.surname}
+                          </p>
+                        </div>
+                        <div className="appointment-description">
+                          <p className="appointment-date">
+                            {new Date(appt.scheduled_date).toLocaleDateString("tr-TR", {
+                              day: "2-digit",
+                              month: "long",
+                              year: "numeric",
+                              weekday: "long",
+                            })}, {appt.start_time?.slice(0, 5)}-{appt.end_time?.slice(0, 5)}
+                          </p>
+                        </div>
+                        <div className="appointment-button-div">
+                          <button
+                            className="appointment-review-button"
+                            onClick={() => handleReviewClick(appt.id)}
+                          >
+                            Görüşmeyi Değerlendir
+                          </button>
+                        </div>
                       </div>
-                  </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
+              )}
             </div>
           </div>
         )}

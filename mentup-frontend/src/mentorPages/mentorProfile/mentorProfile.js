@@ -115,7 +115,7 @@ const MentorProfile = () => {
   const [bio, setBio] = useState("");
   const [phone, setPhone] = useState("");
   const [phoneError, setPhoneError] = useState("");
-  const [mentorFields, setMentorFields] = useState([]);
+  const [industries, setIndustries] = useState([]);
 
   const cities = [
     "Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Amasya", "Ankara", "Antalya", "Artvin", "Aydın", "Balıkesir",
@@ -138,7 +138,7 @@ const MentorProfile = () => {
     "İtalyanca", "Japonca", "Korece", "Portekizce", "Rusça", "Türkçe"
   ];
 
-  const mentorFieldOptions = [
+  const industriesOptions = [
     "Yazılım Geliştirme", "Web Teknolojileri", "Mobil Teknolojiler", "Oyun Geliştirme",
     "Veritabanı ve Backend", "Yapay Zeka & Veri Bilimi", "Veri Analizi & BI",
     "Tasarım & UI/UX", "Pazarlama & İş Geliştirme"
@@ -165,7 +165,13 @@ const MentorProfile = () => {
         setLocation(profile.location || "");
         setSkills(Array.isArray(profile.skills) ? profile.skills : JSON.parse(profile.skills || "[]"));
         setLanguages(Array.isArray(profile.languages) ? profile.languages : JSON.parse(profile.languages || "[]"));
-        setMentorFields(Array.isArray(profile.mentorFields) ? profile.mentorFields : JSON.parse(profile.mentorFields || "[]"));
+        let industriesArr = [];
+        if (user.documents && user.documents.length > 0 && user.documents[0].industries) {
+          industriesArr = Array.isArray(user.documents[0].industries)
+            ? user.documents[0].industries
+            : JSON.parse(user.documents[0].industries || "[]");
+        }
+        setIndustries(industriesArr);
         setProfilePhoto(profile.photo_url || null); 
         setBio(profile.bio || "");
         setPhone(profile.phone || "");
@@ -229,7 +235,7 @@ const MentorProfile = () => {
           location,
           skills: JSON.stringify(skills),
           languages: JSON.stringify(languages),
-          mentorFields: JSON.stringify(mentorFields),
+          Industries: JSON.stringify(industries),
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -344,14 +350,26 @@ const MentorProfile = () => {
                   </div>
 
                   {/* Beceri Alanları */}
-                  <div className="mentor-profile-settings-mentor-fields">
+                  {/* <div className="mentor-profile-settings-mentor-fields">
                     <CustomDropdown
-                      options={mentorFieldOptions}
-                      selectedOptions={mentorFields}
-                      setSelectedOptions={setMentorFields}
+                      options={industriesOptions}
+                      selectedOptions={industries}
+                      setSelectedOptions={setIndustries}
                       label="Beceri Alanları"
                     />
+                  </div> */}
+                <div className="mentor-profile-settings-college">
+                  <label className="mentor-profile-settings-college-label">Beceri Alanları</label>
+                  <div className="mentor-profile-settings-college-input-div">
+                    <input
+                      type="text"
+                      className="mentor-profile-settings-college-input"
+                      value={industries.join(", ")}
+                      readOnly
+                      placeholder="Beceri alanlarınız burada gözükecek"
+                    />
                   </div>
+                </div>
 
                   <div className="mentor-profile-settings-industries">
                     <CustomDropdown
