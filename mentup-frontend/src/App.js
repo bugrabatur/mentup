@@ -30,6 +30,7 @@ import MentorAppointments from './mentorPages/mentorAppointments/mentorAppointme
 import MentorAvailabilitySettings from './mentorPages/mentorAvailabilitySettings/mentorAvailabilitySettings';
 import MentorAppointmentRequests from './mentorPages/mentorAppointmentRequests/mentorAppointmentRequests';
 import AppointmentRequests from './pages/appointmentRequests/appointmentRequests';
+import ChatWidget from './components/chatWidget/chatWidget';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -67,6 +68,7 @@ function App() {
   return (
     <div className="App">
       {navbarComponent}
+      {!noNavbarRoutes.includes(location.pathname) && <ChatWidget />}
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/home" element={<Home />} />

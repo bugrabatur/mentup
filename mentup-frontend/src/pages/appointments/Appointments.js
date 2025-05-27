@@ -52,6 +52,26 @@ const Appointments = () => {
     navigate('/mentorreview');
   };
 
+  const handleMessageClick = async (mentorId) => {
+    const token = localStorage.getItem("token");
+    const user1_id = JSON.parse(atob(token.split('.')[1])).id;
+    const user2_id = mentorId;
+
+    const res = await fetch("http://localhost:5001/chatroom/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ user1_id, user2_id, token }),
+    });
+    const data = await res.json();
+    console.log("Chatroom response:", data); // <-- ekle
+
+    // mentorId yerine mentor objesini gönder!
+    window.dispatchEvent(new CustomEvent("openChatRoom", { detail: { chatroom: data.chatroom, mentor: data.mentor } }));
+  };
+
   return (
     <div className="appointments-container">
       <div className="toggle-container">
@@ -119,7 +139,10 @@ const Appointments = () => {
                           </p>
                         </div>
                         <div className="appointment-button-div">
-                          <button className="message-button">Mesaj At</button>
+                          <button 
+                            className="message-button"
+                            onClick={() => handleMessageClick(appt.mentor.id)}
+                          >Mesaj At</button>
                           <button
                             className="appointment-button"
                             onClick={handleJoinMeeting}

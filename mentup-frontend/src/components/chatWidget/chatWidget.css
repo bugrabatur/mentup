@@ -80,12 +80,6 @@
   margin: 0;
 }
 
-.chat-widget-mentor-job {
-  font-size: 0.9rem;
-  color: #ccc;
-  margin: 0;
-}
-
 .chat-widget-close-button {
   height: 30px;
   width: 30px;
@@ -289,7 +283,7 @@
   padding: 12px 16px;
   border-bottom: 1px solid #333;
   cursor: pointer;
-  transition: background-color 0.15 ease;
+  transition: background-color 0.2s ease;
 }
 
 .chat-bar-preview:hover {
@@ -315,11 +309,6 @@
   margin-bottom: 2px;
 }
 
-.chat-bar-job {
-  font-size: 0.9rem;
-  color: #ccc;
-  margin-bottom: 2px;
-}
 
 .chat-bar-lastmsg {
   font-size: 0.85rem;
@@ -367,4 +356,59 @@
 
 .chat-widget-back-button:hover {
   background-color: #3d6a47;
+}
+
+.chat-widget-message-bubble {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: flex-end;
+  position: relative;
+  max-width: 80%;
+  text-align: left;
+  word-break: break-word;
+  white-space: pre-wrap;
+  padding-bottom: 8px;
+}
+
+.chat-widget-message-bubble > span:first-child {
+  flex: 1;
+  text-align: left;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.chat-widget-message-time {
+  font-size: 10px;
+  color: #fff;
+  opacity: 0.7;
+  background: transparent;
+  pointer-events: none;
+  margin-left: 8px;
+  align-self: flex-end;
+  white-space: nowrap;
+  line-height: 1;
+}
+/* Chat içi scroll bar */
+.chat-widget-body,
+.chat-bar-list {
+  scrollbar-width: thin;
+  scrollbar-color: #8e9291 #232323; /* thumb ve track renkleri */
+}
+
+/* Chrome, Edge, Safari için */
+.chat-widget-body::-webkit-scrollbar,
+.chat-bar-list::-webkit-scrollbar {
+  width: 8px;
+  background: #232323;
+}
+
+.chat-widget-body::-webkit-scrollbar-thumb,
+.chat-bar-list::-webkit-scrollbar-thumb {
+  background: #1e532a;
+  border-radius: 8px;
+}
+
+.chat-widget-body::-webkit-scrollbar-thumb:hover,
+.chat-bar-list::-webkit-scrollbar-thumb:hover {
+  background: #35856f;
 }

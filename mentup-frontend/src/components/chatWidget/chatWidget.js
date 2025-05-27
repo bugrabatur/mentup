@@ -1,37 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import './chatWidget.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCommentDots, faArrowDown, faArrowRight, faArrowLeft, faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDown, faArrowRight, faArrowLeft, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 
-const mockChats = [
-  {
-    id: 1,
-    name: "William Johnson",
-    job: "Web Tasarımcı",
-    photo: "https://randomuser.me/api/portraits/men/32.jpg",
-    messages: [
-      { text: "Merhaba! Yardımcı olabilir miyim?", sender: "mentor" },
-      { text: "Evet, bir mentora ulaşmak istiyorum.", sender: "user" }
-    ]
-  },
-  {
-    id: 2,
-    name: "Ayşe Yılmaz",
-    job: "Mobil Geliştirici",
-    photo: "https://randomuser.me/api/portraits/women/44.jpg",
-    messages: [
-      { text: "Selam! Mobil geliştirme hakkında sorunuz var mı?", sender: "mentor" }
-    ]
-  }
-];
 
 export default function ChatWidget() {
   const [barOpen, setBarOpen] = useState(false);
-  const [barClosing, setBarClosing] = useState(false); // <-- yeni state
+  const [barClosing, setBarClosing] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState(null);
-  const [chats, setChats] = useState(mockChats);
+  const [chats, setChats] = useState([]);
   const [newMessages, setNewMessages] = useState({});
-  const [chatClosing, setChatClosing] = useState(false); // yeni state
+  const [chatClosing, setChatClosing] = useState(false);
+
+  const messagesEndRef = useRef(null);
+  const widgetRef = useRef(null);
+
+  // Otomatik scroll
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chats, selectedChatId, chatClosing]);
 
   // Barı aç/kapat fonksiyonu
   const handleBarToggle = () => {
@@ -40,7 +29,7 @@ export default function ChatWidget() {
       setTimeout(() => {
         setBarOpen(false);
         setBarClosing(false);
-      }, 200); // animasyon süresi ile aynı olmalı
+      }, 200);
     } else {
       setBarOpen(true);
     }
@@ -53,13 +42,40 @@ export default function ChatWidget() {
   const handleChatClose = () => setSelectedChatId(null);
 
   // Mesaj gönder
-  const handleSendMessage = (chatId) => {
+  const handleSendMessage = async (chatId) => {
     const msg = (newMessages[chatId] || "").trim();
     if (!msg) return;
+
+    // API'ye gönder
+    const token = localStorage.getItem("token");
+    const res = await fetch("http://localhost:5001/message/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        chatroom_id: chatId,
+        content: msg
+      }),
+    });
+    const data = await res.json();
+
+    // Localde göster (created_at backend'den geliyorsa ekle)
     setChats((prev) =>
       prev.map((chat) =>
         chat.id === chatId
-          ? { ...chat, messages: [...chat.messages, { text: msg, sender: "user" }] }
+          ? {
+              ...chat,
+              messages: [
+                ...chat.messages,
+                {
+                  text: msg,
+                  sender: "user",
+                  created_at: data.data?.created_at || new Date().toISOString()
+                }
+              ]
+            }
           : chat
       )
     );
@@ -77,11 +93,85 @@ export default function ChatWidget() {
     setTimeout(() => {
       setSelectedChatId(null);
       setChatClosing(false);
-    }, 200); // animasyon süresi ile aynı olmalı
+    }, 200);
   };
 
+  useEffect(() => {
+    const handleOpenChatRoom = (e) => {
+      const { chatroom, mentor } = e.detail;
+      if (!chatroom || !chatroom.id) return; // <-- Güvenli kontrol
+
+      if (!mentor || !mentor.id) {
+        setChats((prev) => {
+          if (prev.some(c => c.id === chatroom.id)) return prev;
+          return [
+            ...prev,
+            {
+              id: chatroom.id,
+              name: "Mentor",
+              photo: "",
+              messages: []
+            }
+          ];
+        });
+        return;
+      }
+      setBarOpen(true);
+      setBarClosing(false);
+      setSelectedChatId(chatroom.id);
+
+      setChats((prev) => {
+        if (prev.some(c => c.id === chatroom.id)) return prev;
+        return [
+          ...prev,
+          {
+            id: chatroom.id,
+            name: mentor.name || "Mentor",
+            photo: mentor.photo || "",
+            messages: []
+          }
+        ];
+      });
+    };
+    window.addEventListener("openChatRoom", handleOpenChatRoom);
+    return () => window.removeEventListener("openChatRoom", handleOpenChatRoom);
+  }, []);
+
+  useEffect(() => {
+    const fetchChats = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const res = await fetch("http://localhost:5001/chatroom/my", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      // data örneği: [{id, name, photo, messages: [{text, sender}, ...]}, ...]
+      setChats(data.chats || []);
+    };
+    fetchChats();
+  }, []);
+
+  // Dışarı tıklanınca pencereyi kapat
+  useEffect(() => {
+    if (!(barOpen || barClosing)) return;
+
+    const handleClickOutside = (event) => {
+      if (widgetRef.current && !widgetRef.current.contains(event.target)) {
+        setBarOpen(false);
+        setBarClosing(false);
+        setSelectedChatId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [barOpen, barClosing]);
+
   return (
-    <div className="chat-widget-container" style={{ right: 20, bottom: 20 }}>
+    <div
+      className="chat-widget-container"
+      style={{ right: 20, bottom: 20 }}
+      ref={widgetRef}
+    >
       <div className="chat-bar-root">
         {!barOpen && !barClosing && (
           <div className="chat-bar-root-header" onClick={handleBarToggle}>
@@ -137,7 +227,6 @@ export default function ChatWidget() {
                       />
                       <div className="chat-bar-info">
                         <div className="chat-bar-name">{chat.name}</div>
-                        <div className="chat-bar-job">{chat.job}</div>
                         <div className="chat-bar-lastmsg">
                           {chat.messages.length > 0
                             ? chat.messages[chat.messages.length - 1].text
@@ -184,10 +273,8 @@ export default function ChatWidget() {
                           <h3 className="chat-widget-mentor-name">
                             {chat.name}
                           </h3>
-                          <p className="chat-widget-mentor-job">{chat.job}</p>
                         </div>
                       </div>
-                      {/* Kapatma butonu kaldırıldı */}
                     </div>
                     <div className="chat-widget-body">
                       {chat.messages.map((msg, index) => (
@@ -206,10 +293,20 @@ export default function ChatWidget() {
                                 : "chat-widget-mentor-bg"
                             }`}
                           >
-                            {msg.text}
+                            <span>{msg.text}</span>
+                            <span className="chat-widget-message-time">
+                              {msg.created_at
+                                ? new Date(msg.created_at).toLocaleTimeString("tr-TR", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: false,
+                                  })
+                                : ""}
+                            </span>
                           </div>
                         </div>
                       ))}
+                      <div ref={messagesEndRef} />
                     </div>
                     <div className="chat-widget-input-container">
                       <input
