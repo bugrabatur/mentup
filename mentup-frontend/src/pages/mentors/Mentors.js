@@ -43,15 +43,29 @@ const Mentors = () => {
                       : undefined,
                   }}
                 >
-                  {/* Sağ üst köşede rating */}
-                  {(
-                    <div className="mentor-card-rating">
-                      <FontAwesomeIcon icon={faStar} style={{ color: "#ff9800", marginRight: 4 }} />
+                  {/* Sağ üst köşede rating ve yıldızlar */}
+                  <div className="mentor-card-rating">
+                    {[...Array(5)].map((_, i) => (
+                      <FontAwesomeIcon
+                        key={i}
+                        icon={faStar}
+                        style={{
+                          color:
+                            ratings[mentor.user_id] !== null &&
+                            ratings[mentor.user_id] !== undefined &&
+                            i < Math.round(ratings[mentor.user_id])
+                              ? "#ff9800"
+                              : "#ccc",
+                          marginRight: 2,
+                        }}
+                      />
+                    ))}
+                    <span style={{ marginLeft: 4, fontWeight: 500 }}>
                       {ratings[mentor.user_id] !== null && ratings[mentor.user_id] !== undefined
-                        ? ratings[mentor.user_id]
+                        ? Number(ratings[mentor.user_id]).toFixed(1)
                         : "Ratingi yok"}
-                    </div>
-                  )}
+                    </span>
+                  </div>
                 </div>
                 <h2 className='mentor-name'>{mentor.name} {mentor.surname}</h2>
                 <p className='mentor-info'>

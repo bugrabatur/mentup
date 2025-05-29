@@ -166,6 +166,14 @@ export default function ChatWidget() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [barOpen, barClosing]);
 
+  useEffect(() => {
+    const openHandler = () => {
+      if (!barOpen) handleBarToggle();
+    };
+    window.addEventListener("openChatWidget", openHandler);
+    return () => window.removeEventListener("openChatWidget", openHandler);
+  }, [barOpen]);
+
   return (
     <div
       className="chat-widget-container"

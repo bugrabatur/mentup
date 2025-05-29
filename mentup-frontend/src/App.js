@@ -112,6 +112,7 @@ function App() {
           element={<MentorAppointmentRequests />}
         />
         <Route path="/appointmentrequests" element={<AppointmentRequests />} />
+        <Route path="/mentorreview/:mentor_id/:appointment_id" element={<MentorReview />} />
       </Routes>
 
     </div>

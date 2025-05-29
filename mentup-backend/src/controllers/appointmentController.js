@@ -62,6 +62,28 @@ exports.updateAppointmentStatus = async (req, res) => {
 // Mentorun gelen taleplerini listeleme
 exports.getMentorAppointments = async (req, res) => {
   try {
+    // --- BURAYA EKLE ---
+    const now = new Date();
+    const today = now.toISOString().slice(0, 10); // YYYY-MM-DD
+    const currentTime = now.toTimeString().slice(0, 5); // HH:MM
+
+    await Appointment.update(
+      { status: 'completed' },
+      {
+        where: {
+          status: 'confirmed',
+          [Op.or]: [
+            { scheduled_date: { [Op.lt]: today } },
+            {
+              scheduled_date: today,
+              end_time: { [Op.lte]: currentTime }
+            }
+          ]
+        }
+      }
+    );
+    // --- EKLEME BİTTİ ---
+
     const mentor_id = req.user.id; // Giriş yapan mentorun ID'si
 
     const appointments = await Appointment.findAll({
@@ -92,30 +114,52 @@ exports.getMentorAppointments = async (req, res) => {
 // Mentee'nin gönderdiği talepleri listeleme
 exports.getMenteeAppointments = async (req, res) => {
   try {
-	const mentee_id = req.user.id; // Giriş yapan mentee'nin ID'si
+    // --- BURAYA EKLE ---
+    const now = new Date();
+    const today = now.toISOString().slice(0, 10);
+    const currentTime = now.toTimeString().slice(0, 5);
 
-	const appointments = await Appointment.findAll({
-	  where: { mentee_id },
-	  include: [
-		{ 
-      model: User, 
-      as: 'mentor', 
-      attributes: ['id', 'name', 'surname', 'email'],
-        include: [
-          {
-            model: require('../models').Profile,
-            as: 'profile',
-            attributes: ['bio', 'photo_url', 'skills'],
-          },
-        ],
-      },
-	  ],
-	});
+    await Appointment.update(
+      { status: 'completed' },
+      {
+        where: {
+          status: 'confirmed',
+          [Op.or]: [
+            { scheduled_date: { [Op.lt]: today } },
+            {
+              scheduled_date: today,
+              end_time: { [Op.lte]: currentTime }
+            }
+          ]
+        }
+      }
+    );
+    // --- EKLEME BİTTİ ---
 
-	res.status(200).json(appointments);
+    const mentee_id = req.user.id; // Giriş yapan mentee'nin ID'si
+
+    const appointments = await Appointment.findAll({
+      where: { mentee_id },
+      include: [
+        { 
+          model: User, 
+          as: 'mentor', 
+          attributes: ['id', 'name', 'surname', 'email'],
+          include: [
+            {
+              model: require('../models').Profile,
+              as: 'profile',
+              attributes: ['bio', 'photo_url', 'skills'],
+            },
+          ],
+        },
+      ],
+    });
+
+    res.status(200).json(appointments);
   } catch (err) {
-	console.error('Mentee randevuları alınamadı:', err);
-	res.status(500).json({ message: 'Randevular alınırken hata oluştu.' });
+    console.error('Mentee randevuları alınamadı:', err);
+    res.status(500).json({ message: 'Randevular alınırken hata oluştu.' });
   }
 };
 
@@ -261,23 +305,33 @@ exports.getMenteeUpcomingAppointments = async (req, res) => {
 
 exports.getMentorPastAppointments = async (req, res) => {
   try {
-    const mentor_id = req.user.id;
+    // --- BURAYA EKLE ---
     const now = new Date();
+    const today = now.toISOString().slice(0, 10);
+    const currentTime = now.toTimeString().slice(0, 5);
 
+    await Appointment.update(
+      { status: 'completed' },
+      {
+        where: {
+          status: 'confirmed',
+          [Op.or]: [
+            { scheduled_date: { [Op.lt]: today } },
+            {
+              scheduled_date: today,
+              end_time: { [Op.lte]: currentTime }
+            }
+          ]
+        }
+      }
+    );
+    // --- EKLEME BİTTİ ---
+
+    const mentor_id = req.user.id;
     const appointments = await Appointment.findAll({
       where: {
         mentor_id,
-        status: "confirmed",
-        // Görüşmenin bitiş zamanı şu anın öncesinde olmalı
-        [Op.or]: [
-          {
-            scheduled_date: { [Op.lt]: now }, // Tarihi geçmiş
-          },
-          {
-            scheduled_date: { [Op.eq]: now.toISOString().slice(0, 10) }, // Bugünse
-            end_time: { [Op.lte]: now.toTimeString().slice(0, 5) }, // Saati geçmiş
-          }
-        ]
+        status: 'completed'
       },
       include: [
         {
@@ -300,5 +354,59 @@ exports.getMentorPastAppointments = async (req, res) => {
   } catch (err) {
     console.error('Geçmiş görüşmeler alınamadı:', err);
     res.status(500).json({ message: 'Geçmiş görüşmeler alınırken hata oluştu.' });
+  }
+};
+
+// Mentee'nin geçmiş (tamamlanmış) görüşmeleri
+exports.getMenteePastAppointments = async (req, res) => {
+  try {
+    // --- BURAYA EKLE ---
+    const now = new Date();
+    const today = now.toISOString().slice(0, 10);
+    const currentTime = now.toTimeString().slice(0, 5);
+
+    await Appointment.update(
+      { status: 'completed' },
+      {
+        where: {
+          status: 'confirmed',
+          [Op.or]: [
+            { scheduled_date: { [Op.lt]: today } },
+            {
+              scheduled_date: today,
+              end_time: { [Op.lte]: currentTime }
+            }
+          ]
+        }
+      }
+    );
+    // --- EKLEME BİTTİ ---
+
+    const mentee_id = req.user.id;
+    const appointments = await Appointment.findAll({
+      where: {
+        mentee_id,
+        status: 'completed'
+      },
+      include: [
+        {
+          model: User,
+          as: 'mentor',
+          attributes: ['id', 'name', 'surname', 'email'],
+          include: [
+            {
+              model: require('../models').Profile,
+              as: 'profile',
+              attributes: ['bio', 'photo_url', 'skills'],
+            },
+          ],
+        },
+      ],
+      order: [['scheduled_date', 'DESC'], ['start_time', 'DESC']]
+    });
+    res.status(200).json(appointments);
+  } catch (err) {
+    console.error('Mentee geçmiş randevuları alınamadı:', err);
+    res.status(500).json({ message: 'Geçmiş randevular alınırken hata oluştu.' });
   }
 };

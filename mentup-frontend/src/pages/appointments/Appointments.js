@@ -48,8 +48,8 @@ const Appointments = () => {
     navigate('/videochat');
   };
 
-  const handleReviewClick = (appointmentId) => {
-    navigate('/mentorreview');
+  const handleReviewClick = (mentorId, appointmentId) => {
+    navigate(`/mentorreview/${mentorId}/${appointmentId}`);
   };
 
   const handleMessageClick = async (mentorId) => {
@@ -197,7 +197,7 @@ const Appointments = () => {
                         <div className="appointment-button-div">
                           <button
                             className="appointment-review-button"
-                            onClick={() => handleReviewClick(appt.id)}
+                            onClick={() => handleReviewClick(appt.mentor.id, appt.id)}
                           >
                             Görüşmeyi Değerlendir
                           </button>

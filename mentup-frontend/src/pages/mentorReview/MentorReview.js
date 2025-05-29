@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 import './MentorReview.css';
 
 const MentorReview = () => {
+  const { mentor_id, appointment_id } = useParams();
+
   // Sorulardan gelen cevaplar için state'ler
   const [answers, setAnswers] = useState({
     q1: 0,
@@ -34,16 +37,38 @@ const MentorReview = () => {
   };
 
   // Kaydet butonuna basıldığında çalışacak fonksiyon
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!areAllQuestionsAnswered()) {
       alert("Lütfen tüm soruları cevaplayın.");
       return;
     }
 
-    // Eğer tüm sorular cevaplanmışsa, burada backend'e veri gönderme işlemi yapılabilir
-    alert("Değerlendirme başarıyla gönderildi!");
-    console.log("Cevaplar:", answers);
-    console.log("Yorum:", comment);
+    try {
+      const token = localStorage.getItem("token");
+      const { q1, q2, q3, q4, q5, q6 } = answers;
+      const payload = {
+        appointment_id,
+        q1, q2, q3, q4, q5, q6,
+        comment,
+      };
+
+      console.log("Gönderilen payload:", payload);
+      console.log("mentor_id:", mentor_id, "appointment_id:", appointment_id);
+
+      await fetch("http://localhost:5001/reviews/mentorReview", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      alert("Değerlendirme başarıyla gönderildi!");
+      // İstersen yönlendirme veya sayfa yenileme ekle
+    } catch (err) {
+      alert("Bir hata oluştu, tekrar deneyin.");
+    }
   };
 
   return (

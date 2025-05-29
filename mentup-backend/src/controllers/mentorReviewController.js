@@ -1,23 +1,20 @@
-const { MentorReview, Review, Appointment } = require('../models');
+const { Review, Appointment } = require('../models');
 
 exports.createMentorReview = async (req, res) => {
   try {
-    const mentee_id = req.user.id;
-    const { mentor_id, appointment_id, q1, q2, q3, q4, q5, q6, comment } = req.body;
+    const { appointment_id, q1, q2, q3, q4, q5, q6, comment } = req.body;
     // Rating hesapla
     const rating = ((q1 + q2 + q3 + q4 + q5 + q6) / 6).toFixed(2);
 
-    // Aynı mentee aynı appointment için tekrar değerlendirme yapamasın
-    const exists = await MentorReview.findOne({ where: { mentee_id, appointment_id } });
+    // Aynı appointment için tekrar değerlendirme yapmasın
+    const exists = await Review.findOne({ where: { appointment_id } });
     if (exists) return res.status(400).json({ message: "Bu görüşme zaten değerlendirildi." });
 
-    const review = await MentorReview.create({
-      mentor_id,
-      mentee_id,
+    // Review tablosuna kaydet
+    const review = await Review.create({
       appointment_id,
-      q1, q2, q3, q4, q5, q6,
-      comment,
-      rating
+      rating: Math.round(rating),
+      comment
     });
 
     res.status(201).json(review);
@@ -30,7 +27,8 @@ exports.createMentorReview = async (req, res) => {
 exports.getMentorAverageRating = async (req, res) => {
   try {
     const { mentor_id } = req.params;
-    // Mentorun tüm completed/completed+confirmed appointment'larını bul
+
+    // 1. Bu mentora ait tüm appointment'ların id'lerini bul
     const appointments = await Appointment.findAll({
       where: { mentor_id },
       attributes: ['id'],
@@ -39,13 +37,14 @@ exports.getMentorAverageRating = async (req, res) => {
 
     if (!appointmentIds.length) return res.json({ rating: null });
 
-    // Bu appointment'lara ait review'ları bul
+    // 2. Bu appointment'lara ait review'ları bul
     const reviews = await Review.findAll({
       where: { appointment_id: appointmentIds }
     });
 
     if (!reviews.length) return res.json({ rating: null });
 
+    // 3. Ortalama rating'i hesapla
     const avg = (
       reviews.reduce((acc, r) => acc + (r.rating || 0), 0) / reviews.length
     ).toFixed(2);

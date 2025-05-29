@@ -65,6 +65,10 @@ const Navbar3 = () => {
     };
   }, []);
 
+  const handleOpenChatWidget = () => {
+    window.dispatchEvent(new Event("openChatWidget"));
+  };
+
   return (
     <nav className="navbar-secondary">
       <div className="navbar-secondary-content">
@@ -82,7 +86,7 @@ const Navbar3 = () => {
             <a href="/aboutus">Hakkımızda</a>
           </div>
           <div className="navbar-secondary-options">
-            <button className="navbar-secondary-messages-button">
+            <button className="navbar-secondary-messages-button" onClick={handleOpenChatWidget}>
               <FontAwesomeIcon icon={faMessage} style={{ color: "white" }} />
             </button>
             <button className="navbar-secondary-notifications-button">
@@ -185,4 +189,4 @@ const Navbar3 = () => {
   );
 };
 
-export default Navbar3
+export default Navbar3;
