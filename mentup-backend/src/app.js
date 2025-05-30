@@ -10,6 +10,9 @@ const userRoleRoutes = require('./routes/userRoleRoutes');
 const mentorRoutes = require('./routes/mentorRoutes');
 const availabilitySlotRoutes = require('./routes/availabilitySlotRoutes');
 const appointmentsRoutes = require('./routes/appointmentsRoutes');
+const mentorReviewRoutes = require('./routes/mentorReviewRoutes');
+const chatroomRoutes = require('./routes/chatroomRoutes');
+const messageRoutes = require('./routes/messageRoutes');
 const path = require('path');
 
 const app = express();
@@ -35,5 +38,8 @@ app.use('/mentor/availability', availabilitySlotRoutes);
 app.use('/admin', adminPanelRoutes);
 app.use('/user-role', userRoleRoutes);
 app.use('/appointments', appointmentsRoutes);
+app.use('/reviews', mentorReviewRoutes);
+app.use('/chatroom', chatroomRoutes);
+app.use('/message', messageRoutes)
 
 module.exports = app;

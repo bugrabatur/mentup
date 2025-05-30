@@ -8,6 +8,11 @@ module.exports = (sequelize, DataTypes) => {
       content: {
         type: DataTypes.TEXT,
         allowNull: false
+      },
+      is_read: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
       }
     }, {
       tableName: 'direct_messages',

@@ -10,6 +10,7 @@ const Navbar3 = () => {
   const [userName, setUserName] = useState('');
   const [userSurname, setUserSurname] = useState('');
   const [photo_url, setPhoto_url] = useState('');
+  const [totalUnread, setTotalUnread] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +28,24 @@ const Navbar3 = () => {
       }
     };
     fetchUserProfile();
+  }, []);
+
+  useEffect(() => {
+    const fetchTotalUnread = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      const res = await fetch("http://localhost:5001/message/unread-counts", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      setTotalUnread(data.totalUnread || 0);
+    };
+    fetchTotalUnread();
+
+    // Event ile güncelle
+    const handler = () => fetchTotalUnread();
+    window.addEventListener("refreshUnreadCount", handler);
+    return () => window.removeEventListener("refreshUnreadCount", handler);
   }, []);
 
   const handleLogout = async () => {
@@ -86,8 +105,11 @@ const Navbar3 = () => {
             <a href="/aboutus">Hakkımızda</a>
           </div>
           <div className="navbar-secondary-options">
-            <button className="navbar-secondary-messages-button" onClick={handleOpenChatWidget}>
+            <button className="navbar-secondary-messages-button" onClick={handleOpenChatWidget} style={{ position: "relative" }}>
               <FontAwesomeIcon icon={faMessage} style={{ color: "white" }} />
+              {totalUnread > 0 && (
+                <span className="navbar-unread-badge">{totalUnread}</span>
+              )}
             </button>
             <button className="navbar-secondary-notifications-button">
               <FontAwesomeIcon icon={faBell} style={{ color: "white" }} />

@@ -1,4 +1,5 @@
 const { DirectMessage, ChatRoom } = require('../models');
+const {Op} = require('sequelize');
 
 exports.sendMessage = async (req, res) => {
   const sender_id = req.user.id; // JWT'den gelen ID
@@ -55,5 +56,67 @@ exports.getMessagesByChatRoom = async (req, res) => {
   } catch (err) {
     console.error('Mesajlar getirilirken hata:', err);
     res.status(500).json({ message: 'Bir hata oluştu.', error: err.message });
+  }
+};
+
+exports.getUnreadCounts = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Kullanıcının üyesi olduğu chatroom'ları bul
+    // Eğer ChatRoomUser tablon yoksa, user'ın dahil olduğu chatroom'ları kendi mantığına göre bulmalısın
+    const chatrooms = await ChatRoom.findAll({
+      include: [{
+        model: require('../models').User,
+        as: 'participants',
+        where: { id: userId }
+      }],
+      attributes: ['id']
+    });
+
+    const chatroomIds = chatrooms.map(c => c.id);
+
+    // Her chatroom için okunmamış mesaj sayısını bul
+    const unreadCounts = {};
+    for (const chatroomId of chatroomIds) {
+      const count = await DirectMessage.count({
+        where: {
+          chatroom_id: chatroomId,
+          is_read: false,
+          sender_id: { [Op.ne]: userId } // Kullanıcının göndermediği mesajlar
+        }
+      });
+      unreadCounts[chatroomId] = count;
+    }
+
+    // Toplam okunmamış mesaj sayısı
+    const totalUnread = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
+
+    res.json({ unreadCounts, totalUnread });
+  } catch (err) {
+    console.error('Okunmamış mesajlar alınırken hata:', err);
+    res.status(500).json({ message: 'Bir hata oluştu.', error: err.message });
+  }
+};
+
+exports.markAsRead = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { chatroomId } = req.params;
+
+    // Kullanıcının göndermediği ve okunmamış mesajları okunduya çek
+    await DirectMessage.update(
+      { is_read: true },
+      {
+        where: {
+          chatroom_id: chatroomId,
+          is_read: false,
+          sender_id: { [Op.ne]: userId }
+        }
+      }
+    );
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ message: "Okunduya çekilemedi", error: err.message });
   }
 };

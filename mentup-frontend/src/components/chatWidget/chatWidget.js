@@ -11,6 +11,7 @@ export default function ChatWidget() {
   const [chats, setChats] = useState([]);
   const [newMessages, setNewMessages] = useState({});
   const [chatClosing, setChatClosing] = useState(false);
+  const [unreadCounts, setUnreadCounts] = useState({}); // Okunmamış mesaj sayısını tutan state
 
   const messagesEndRef = useRef(null);
   const widgetRef = useRef(null);
@@ -145,11 +146,25 @@ export default function ChatWidget() {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
-      // data örneği: [{id, name, photo, messages: [{text, sender}, ...]}, ...]
+      // data örneği: [{id, name, photo, messages: [{text, sender, created_at}, ...]}, ...]
       setChats(data.chats || []);
     };
     fetchChats();
   }, []);
+
+  // Okunmamış mesajları çek
+  useEffect(() => {
+    const fetchUnreadCounts = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const res = await fetch("http://localhost:5001/message/unread-counts", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      setUnreadCounts(data.unreadCounts || {});
+    };
+    fetchUnreadCounts();
+  }, [chats]); // chats değişince tekrar çek
 
   // Dışarı tıklanınca pencereyi kapat
   useEffect(() => {
@@ -173,6 +188,99 @@ export default function ChatWidget() {
     window.addEventListener("openChatWidget", openHandler);
     return () => window.removeEventListener("openChatWidget", openHandler);
   }, [barOpen]);
+
+  // Mesajlarda tarih başlığı ekleme fonksiyonu
+  const renderMessagesWithDateLabels = (messages) => {
+    let lastDate = null;
+    const days = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    return messages.map((msg, index) => {
+      const msgDate = msg.created_at ? new Date(msg.created_at) : null;
+      const msgDay = msgDate ? msgDate.toISOString().slice(0, 10) : null;
+      const todayDay = today.toISOString().slice(0, 10);
+      const yesterdayDay = yesterday.toISOString().slice(0, 10);
+
+      let dateLabel = null;
+      if (msgDay && lastDate !== msgDay) {
+        if (msgDay === todayDay) {
+          dateLabel = "Bugün";
+        } else if (msgDay === yesterdayDay) {
+          dateLabel = "Dün";
+        } else {
+          dateLabel =
+            msgDate.toLocaleDateString("tr-TR", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+            }) +
+            " " +
+            days[msgDate.getDay()];
+        }
+      }
+      lastDate = msgDay;
+
+      return (
+        <React.Fragment key={index}>
+          {dateLabel && (
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <div className="chat-widget-date-label">
+                {dateLabel}
+              </div>
+            </div>
+          )}
+          <div
+            className={`chat-widget-message ${
+              msg.sender === "user"
+                ? "chat-widget-user-message"
+                : "chat-widget-mentor-message"
+            }`}
+          >
+            <div
+              className={`chat-widget-message-bubble ${
+                msg.sender === "user"
+                  ? "chat-widget-user-bg"
+                  : "chat-widget-mentor-bg"
+              }`}
+            >
+              <span>{msg.text}</span>
+              <span className="chat-widget-message-time">
+                {msg.created_at
+                  ? new Date(msg.created_at).toLocaleTimeString("tr-TR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    })
+                  : ""}
+              </span>
+            </div>
+          </div>
+        </React.Fragment>
+      );
+    });
+  };
+
+  useEffect(() => {
+    if (selectedChatId !== null) {
+      const markAsRead = async () => {
+        const token = localStorage.getItem("token");
+        await fetch(`http://localhost:5001/message/chatroom/${selectedChatId}/mark-read`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const res = await fetch("http://localhost:5001/message/unread-counts", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        setUnreadCounts(data.unreadCounts || {});
+        // --- Buraya ekle ---
+        window.dispatchEvent(new Event("refreshUnreadCount"));
+      };
+      markAsRead();
+    }
+  }, [selectedChatId]);
 
   return (
     <div
@@ -241,6 +349,11 @@ export default function ChatWidget() {
                             : ""}
                         </div>
                       </div>
+                      {unreadCounts[chat.id] > 0 && (
+                        <div className="chat-bar-unread-badge">
+                          {unreadCounts[chat.id]}
+                        </div>
+                      )}
                     </div>
                   ))}
                   {chats.length === 0 && (
@@ -285,35 +398,7 @@ export default function ChatWidget() {
                       </div>
                     </div>
                     <div className="chat-widget-body">
-                      {chat.messages.map((msg, index) => (
-                        <div
-                          key={index}
-                          className={`chat-widget-message ${
-                            msg.sender === "user"
-                              ? "chat-widget-user-message"
-                              : "chat-widget-mentor-message"
-                          }`}
-                        >
-                          <div
-                            className={`chat-widget-message-bubble ${
-                              msg.sender === "user"
-                                ? "chat-widget-user-bg"
-                                : "chat-widget-mentor-bg"
-                            }`}
-                          >
-                            <span>{msg.text}</span>
-                            <span className="chat-widget-message-time">
-                              {msg.created_at
-                                ? new Date(msg.created_at).toLocaleTimeString("tr-TR", {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                    hour12: false,
-                                  })
-                                : ""}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
+                      {renderMessagesWithDateLabels(chat.messages)}
                       <div ref={messagesEndRef} />
                     </div>
                     <div className="chat-widget-input-container">
