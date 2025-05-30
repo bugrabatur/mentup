@@ -13,7 +13,7 @@ exports.createMentorReview = async (req, res) => {
     // Review tablosuna kaydet
     const review = await Review.create({
       appointment_id,
-      rating: Math.round(rating),
+      rating: rating,
       comment
     });
 

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Mentors.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar, faStarHalfAlt } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
 
 const Mentors = () => {
   const [mentors, setMentors] = useState([]);
@@ -45,21 +46,46 @@ const Mentors = () => {
                 >
                   {/* Sağ üst köşede rating ve yıldızlar */}
                   <div className="mentor-card-rating">
-                    {[...Array(5)].map((_, i) => (
-                      <FontAwesomeIcon
-                        key={i}
-                        icon={faStar}
-                        style={{
-                          color:
-                            ratings[mentor.user_id] !== null &&
-                            ratings[mentor.user_id] !== undefined &&
-                            i < Math.round(ratings[mentor.user_id])
-                              ? "#ff9800"
-                              : "#ccc",
-                          marginRight: 2,
-                        }}
-                      />
-                    ))}
+                    {[...Array(5)].map((_, i) => {
+                      const rating = ratings[mentor.user_id];
+                      if (rating === null || rating === undefined) {
+                        return (
+                          <FontAwesomeIcon
+                            key={i}
+                            icon={faStarRegular}
+                            style={{ color: "#ccc", marginRight: 2 }}
+                          />
+                        );
+                      }
+                      if (i < Math.floor(rating)) {
+                        // Dolu yıldız
+                        return (
+                          <FontAwesomeIcon
+                            key={i}
+                            icon={faStar}
+                            style={{ color: "#ff9800", marginRight: 2 }}
+                          />
+                        );
+                      }
+                      if (i < rating && rating < i + 1) {
+                        // Yarım yıldız
+                        return (
+                          <FontAwesomeIcon
+                            key={i}
+                            icon={faStarHalfAlt}
+                            style={{ color: "#ff9800", marginRight: 2 }}
+                          />
+                        );
+                      }
+                      // Boş yıldız
+                      return (
+                        <FontAwesomeIcon
+                          key={i}
+                          icon={faStarRegular}
+                          style={{ color: "#ccc", marginRight: 2 }}
+                        />
+                      );
+                    })}
                     <span style={{ marginLeft: 4, fontWeight: 500 }}>
                       {ratings[mentor.user_id] !== null && ratings[mentor.user_id] !== undefined
                         ? Number(ratings[mentor.user_id]).toFixed(1)

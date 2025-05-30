@@ -102,6 +102,8 @@
   overflow-y: auto;
   text-align: left;
   min-height: 0;
+  position: relative;
+  height: 350px;
 }
 
 .chat-widget-message {
@@ -435,4 +437,46 @@
   font-size: 12px;
   font-weight: 500;
   margin-left: 8px;
+}
+
+.chat-widget-unread-label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 20px 0;
+  font-size: 13px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.chat-widget-unread-label::before,
+.chat-widget-unread-label::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #ccc;
+  margin: 0 12px;
+}
+
+.chat-widget-scroll-down-btn {
+  position: fixed;
+  right: 180px;
+  bottom: 90px;
+  z-index: 9999;
+  background: #35856f;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  cursor: pointer;
+  font-size: 20px;
+  transition: background-color 0.2s ease;
+}
+
+.chat-widget-scroll-down-btn:hover {
+  background: #1e532a;
 }

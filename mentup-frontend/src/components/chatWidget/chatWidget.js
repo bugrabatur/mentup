@@ -12,8 +12,10 @@ export default function ChatWidget() {
   const [newMessages, setNewMessages] = useState({});
   const [chatClosing, setChatClosing] = useState(false);
   const [unreadCounts, setUnreadCounts] = useState({}); // Okunmamış mesaj sayısını tutan state
+  const [showScrollDown, setShowScrollDown] = useState(false);
 
   const messagesEndRef = useRef(null);
+  const messageRefs = useRef([]); // Her mesaj için ref
   const widgetRef = useRef(null);
 
   // Otomatik scroll
@@ -90,6 +92,23 @@ export default function ChatWidget() {
 
   // Sohbetten geri dön (animasyonlı)
   const handleBackToList = () => {
+    // Sohbetten çıkarken okunduya çek
+    if (selectedChatId !== null) {
+      const markAsRead = async () => {
+        const token = localStorage.getItem("token");
+        await fetch(`http://localhost:5001/message/chatroom/${selectedChatId}/mark-read`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const res = await fetch("http://localhost:5001/message/unread-counts", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        setUnreadCounts(data.unreadCounts || {});
+        window.dispatchEvent(new Event("refreshUnreadCount"));
+      };
+      markAsRead();
+    }
     setChatClosing(true);
     setTimeout(() => {
       setSelectedChatId(null);
@@ -190,12 +209,22 @@ export default function ChatWidget() {
   }, [barOpen]);
 
   // Mesajlarda tarih başlığı ekleme fonksiyonu
-  const renderMessagesWithDateLabels = (messages) => {
+  const renderMessagesWithDateLabels = (messages, unreadCount) => {
     let lastDate = null;
     const days = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
     const today = new Date();
     const yesterday = new Date();
     yesterday.setDate(today.getDate() - 1);
+
+    // İlk okunmamış mesajın indexini bul
+    let firstUnreadIndex = -1;
+    if (unreadCount > 0) {
+      // Son unreadCount kadar mesaj okunmamış demektir (backend öyle döndü varsayımıyla)
+      firstUnreadIndex = messages.length - unreadCount;
+    }
+
+    // Her mesaj için ref oluştur
+    messageRefs.current = messages.map((_, i) => messageRefs.current[i] || React.createRef());
 
     return messages.map((msg, index) => {
       const msgDate = msg.created_at ? new Date(msg.created_at) : null;
@@ -231,7 +260,16 @@ export default function ChatWidget() {
               </div>
             </div>
           )}
+          {/* Okunmamış mesaj etiketi */}
+          {index === firstUnreadIndex && unreadCount > 0 && (
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <div className="chat-widget-unread-label">
+                {unreadCount} okunmamış mesaj
+              </div>
+            </div>
+          )}
           <div
+            ref={messageRefs.current[index]}
             className={`chat-widget-message ${
               msg.sender === "user"
                 ? "chat-widget-user-message"
@@ -262,25 +300,49 @@ export default function ChatWidget() {
     });
   };
 
+  // useEffect(() => {
+  //   if (selectedChatId !== null) {
+  //     const markAsRead = async () => {
+  //       const token = localStorage.getItem("token");
+  //       await fetch(`http://localhost:5001/message/chatroom/${selectedChatId}/mark-read`, {
+  //         method: "POST",
+  //         headers: { Authorization: `Bearer ${token}` }
+  //       });
+  //       const res = await fetch("http://localhost:5001/message/unread-counts", {
+  //         headers: { Authorization: `Bearer ${token}` }
+  //       });
+  //       const data = await res.json();
+  //       setUnreadCounts(data.unreadCounts || {});
+  //       // --- Buraya ekle ---
+  //       window.dispatchEvent(new Event("refreshUnreadCount"));
+  //     };
+  //     markAsRead();
+  //   }
+  // }, [selectedChatId]);
+
   useEffect(() => {
-    if (selectedChatId !== null) {
-      const markAsRead = async () => {
-        const token = localStorage.getItem("token");
-        await fetch(`http://localhost:5001/message/chatroom/${selectedChatId}/mark-read`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const res = await fetch("http://localhost:5001/message/unread-counts", {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        setUnreadCounts(data.unreadCounts || {});
-        // --- Buraya ekle ---
-        window.dispatchEvent(new Event("refreshUnreadCount"));
-      };
-      markAsRead();
+    if (!selectedChatId) return;
+    const unread = unreadCounts[selectedChatId] || 0;
+    if (unread > 0 && messageRefs.current.length > 0) {
+      // İlk okunmamış mesaja scroll
+      const idx = messageRefs.current.length - unread;
+      messageRefs.current[idx]?.current?.scrollIntoView({ behavior: "auto", block: "center" });
+    } else if (messagesEndRef.current) {
+      // Okunmamış yoksa en sona scroll
+      messagesEndRef.current.scrollIntoView({ behavior: "auto" });
     }
-  }, [selectedChatId]);
+  }, [selectedChatId, chats, unreadCounts]);
+
+  const handleScroll = (e) => {
+    const el = e.target;
+    // Konsola yaz
+    console.log("scroll", el.scrollTop, el.scrollHeight, el.clientHeight);
+    if (el.scrollHeight - el.scrollTop - el.clientHeight > 100) {
+      setShowScrollDown(true);
+    } else {
+      setShowScrollDown(false);
+    }
+  };
 
   return (
     <div
@@ -397,9 +459,17 @@ export default function ChatWidget() {
                         </div>
                       </div>
                     </div>
-                    <div className="chat-widget-body">
-                      {renderMessagesWithDateLabels(chat.messages)}
+                    <div className="chat-widget-body" onScroll={handleScroll}>
+                      {renderMessagesWithDateLabels(chat.messages, unreadCounts[chat.id])}
                       <div ref={messagesEndRef} />
+                      {showScrollDown && (
+                        <button
+                          className="chat-widget-scroll-down-btn"
+                          onClick={() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })}
+                        >
+                          <FontAwesomeIcon icon={faArrowDown} />
+                        </button>
+                      )}
                     </div>
                     <div className="chat-widget-input-container">
                       <input
