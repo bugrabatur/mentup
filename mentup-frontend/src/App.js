@@ -70,7 +70,7 @@ function App() {
       {navbarComponent}
       {!noNavbarRoutes.includes(location.pathname) && <ChatWidget />}
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to="/home" />} />
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
