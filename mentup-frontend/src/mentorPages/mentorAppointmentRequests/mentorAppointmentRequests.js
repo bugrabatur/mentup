@@ -101,18 +101,32 @@ const MentorAppointmentRequests = () => {
     }
   };
 
-  // Slider mantığı
-  const handleSlider = () => setShowRejected((prev) => !prev);
-
   return (
     <div className="appointment-requests-container">
-      <div className="mentor-appointments-toggle-container">
-        <span className={`mentor-appointments-tab-span ${!showRejected ? "active" : ""}`}>Gelen Görüşme Talepleri</span>
-        <label className="mentor-appointments-switch">
-          <input type="checkbox" checked={showRejected} onChange={handleSlider} />
-          <span className="mentor-appointments-slider"></span>
-        </label>
-        <span className={`mentor-appointments-tab-span ${showRejected ? "active" : ""}`}>Reddedilen Görüşme Talepleri</span>
+      <div className="ar-toggle-container">
+        <div className="ar-toggle-tabs">
+          <div
+            className="ar-toggle-slider"
+            style={{
+              left: !showRejected ? 0 : "50%",
+              transition: "left 0.25s cubic-bezier(.4,0,.2,1)"
+            }}
+          />
+          <button
+            className={`ar-toggle-tab${!showRejected ? " active" : ""}`}
+            onClick={() => setShowRejected(false)}
+            type="button"
+          >
+            Gelen Talepler
+          </button>
+          <button
+            className={`ar-toggle-tab${showRejected ? " active" : ""}`}
+            onClick={() => setShowRejected(true)}
+            type="button"
+          >
+            Reddedilen Talepler
+          </button>
+        </div>
       </div>
 
       <div className="appointment-requests-content-div">

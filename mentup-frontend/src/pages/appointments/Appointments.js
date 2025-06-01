@@ -74,24 +74,24 @@ const Appointments = () => {
 
   return (
     <div className="appointments-container">
-      <div className="toggle-container">
-        <div className="appointments-toggle-tabs">
+      <div className="ar-toggle-container">
+        <div className="ar-toggle-tabs">
           <div
-            className="appointments-toggle-slider"
+            className="ar-toggle-slider"
             style={{
               left: isUpcoming ? 0 : "50%",
               transition: "left 0.25s cubic-bezier(.4,0,.2,1)"
             }}
           />
           <button
-            className={`appointments-toggle-tab${isUpcoming ? " active" : ""}`}
+            className={`ar-toggle-tab${isUpcoming ? " active" : ""}`}
             onClick={() => setIsUpcoming(true)}
             type="button"
           >
             Planlanan Görüşmelerim
           </button>
           <button
-            className={`appointments-toggle-tab${!isUpcoming ? " active" : ""}`}
+            className={`ar-toggle-tab${!isUpcoming ? " active" : ""}`}
             onClick={() => setIsUpcoming(false)}
             type="button"
           >

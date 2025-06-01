@@ -97,6 +97,9 @@ const Navbar3 = () => {
             <span>MentUp</span>
           </a>
         </div>
+        <div className="navbar-secondary-apply-mentorship">
+          <a href="/mentoravailabilitysettings">Uygunluk Ayarları</a>
+        </div>
         <div className="navbar-secondary-items-right-col">
           <div className="navbar-secondary-items">
             <a href="/mentorappointments">Görüşmelerim</a>

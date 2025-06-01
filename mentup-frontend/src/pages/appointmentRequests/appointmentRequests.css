@@ -1,41 +1,97 @@
-.mentee-appointment-requests-container {
+.ar-requests-container {
   background-color: #121212;
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  
   margin: 0;
   width: 100%;
-  height: 100vh;
-  overflow-y: auto;
+  height: 100%;
+  overflow-y: hidden;
+  overflow-x: hidden;
 }
 
-.mentee-appointment-requests-content-div {
+.ar-toggle-container {
+  width: 100%;
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: flex-start;
+  margin: 40px 40px 10px 40px;
+}
+
+.ar-toggle-tabs {
+  position: relative;
+  width: 400px;
+  height: 48px;
+  background: #232323;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.ar-toggle-tab {
+  flex: 1;
+  height: 48px;
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 24px;
+  cursor: pointer;
+  z-index: 1;
+  transition: color 0.2s;
+}
+
+.ar-toggle-tab.active {
+  color: #232323;
+}
+
+.ar-toggle-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: #fff;
+  border-radius: 24px;
+  z-index: 0;
+  transition: left 0.25s cubic-bezier(.4,0,.2,1);
+}
+
+.ar-content-div {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  margin-bottom: 100px;
 }
 
-.mentee-appointment-requests-title {
+.ar-title {
   font-size: 28px;
   color: #fff;
   margin-left: 40px;
-  margin-top: 40px;
+  margin-top: 20px;
 }
 
-.mentee-appointment-requests-cards {
+.ar-cards {
+  width: 100%;
+  max-width: 700px;
   display: flex;
   flex-direction: column;
   margin-left: 40px;
-  margin-top: 20px ;
+  margin-top: 20px;
 }
 
-.mentee-appointment-requests-card {
+.ar-card {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
   margin-bottom: 20px;
-  width: 60%;
-  height: 200px;
+  min-width: 320px;
+  max-width: 700px;
+  width: 100%;
+  height: 160px;
   background-color: #171717;
   border: 1px solid rgb(59, 59, 59);
   border-radius: 10px;
@@ -43,7 +99,7 @@
   padding: 2rem;
 }
 
-.mentee-appointment-requests-image {
+.ar-image {
   width: 160px;
   height: 160px;
   border-radius: 50%;
@@ -53,28 +109,27 @@
   margin-right: 20px;
   flex-shrink: 0;
   margin: 20px;
-  margin-right: 20px;
 }
 
-.mentee-appointment-requests-info-content {
+.ar-info-content {
   display: flex;
   flex-direction: column;
 }
 
-.mentee-appointment-requests-info-title {
+.ar-info-title {
   font-size: 20px;
   color: #fff;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-.mentee-appointment-requests-name {
+.ar-name {
   color: #fff;
   font-size: 16px;
   margin-bottom: 10px;
 }
 
-.mentee-appointment-requests-description {
+.ar-description {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -82,14 +137,14 @@
 }
 
 /* Modal stilleri */
-.mentee-appointment-requests-modal-overlay {
+.ar-modal-overlay {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
   background: rgba(0,0,0,0.8);
   display: flex; justify-content: center; align-items: center;
   z-index: 1000;
 }
-.mentee-appointment-requests-modal-card {
+.ar-modal-card {
   background: #1d1d1d;
   padding: 24px;
   border-radius: 10px;
@@ -103,7 +158,7 @@
   gap: 18px;
   position: relative;
 }
-.mentee-appointment-requests-modal-close-button {
+.ar-modal-close-button {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -115,26 +170,26 @@
   cursor: pointer;
   transition: color 0.2s;
 }
-.mentee-appointment-requests-modal-close-button:hover {
+.ar-modal-close-button:hover {
   color: #ff4d4d;
 }
-.mentee-appointment-requests-modal-form-item {
+.ar-modal-form-item {
   display: flex;
   flex-direction: column;
   gap: 5px;
   margin-bottom: 5px;
 }
-.mentee-appointment-requests-modal-form-item label {
+.ar-modal-form-item label {
   font-weight: 600; 
   color: #8e9291; 
   font-size: 13px;
   margin-bottom: 4px;
 }
-.mentee-appointment-requests-modal-text {
+.ar-modal-text {
   font-size: 14px; color: #fff; background: #232323;
   padding: 8px 12px; border-radius: 8px; border: 1px solid #444; margin: 0;
 }
-.mentee-appointment-requests-modal-form-item input.mentee-appointment-requests-modal-text {
+.ar-modal-form-item input.ar-modal-text {
   width: 100%;
   box-sizing: border-box;
   font-size: 14px;
@@ -149,13 +204,13 @@
   font-family: inherit;
   display: block;
 }
-.mentee-appointment-requests-modal-cancel-row {
+.ar-modal-cancel-row {
   display: flex;
   justify-content: flex-start;
   margin-top: 12px;
 }
 
-.mentee-appointment-requests-modal-cancel-button {
+.ar-modal-cancel-button {
   background: #8e2e28;
   color: #fff;
   border: none;
@@ -167,6 +222,7 @@
   transition: background-color 0.3s ease;
 }
 
-.mentee-appointment-requests-modal-cancel-button:hover {
+.ar-modal-cancel-button:hover {
   background: #b03a2e;
 }
+

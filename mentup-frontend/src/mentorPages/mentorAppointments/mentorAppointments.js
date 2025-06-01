@@ -62,13 +62,30 @@ const MentorAppointments = () => {
 
   return (
     <div className="mentor-appointments-container">
-      <div className="mentor-appointments-toggle-container">
-        <span className={`mentor-appointments-tab-span ${isUpcoming ? "active" : ""}`}>Planlanan Görüşmelerim</span>
-        <label className="mentor-appointments-switch">
-          <input type="checkbox" checked={!isUpcoming} onChange={toggleView} />
-          <span className="mentor-appointments-slider"></span>
-        </label>
-        <span className={`mentor-appointments-tab-span ${!isUpcoming ? "active" : ""}`}>Geçmiş Görüşmelerim</span>
+      <div className="ar-toggle-container">
+        <div className="ar-toggle-tabs">
+          <div
+            className="ar-toggle-slider"
+            style={{
+              left: isUpcoming ? 0 : "50%",
+              transition: "left 0.25s cubic-bezier(.4,0,.2,1)"
+            }}
+          />
+          <button
+            className={`ar-toggle-tab${isUpcoming ? " active" : ""}`}
+            onClick={() => setIsUpcoming(true)}
+            type="button"
+          >
+            Planlanan Görüşmelerim
+          </button>
+          <button
+            className={`ar-toggle-tab${!isUpcoming ? " active" : ""}`}
+            onClick={() => setIsUpcoming(false)}
+            type="button"
+          >
+            Geçmiş Görüşmelerim
+          </button>
+        </div>
       </div>
 
       <div className="mentor-appointments-content">
