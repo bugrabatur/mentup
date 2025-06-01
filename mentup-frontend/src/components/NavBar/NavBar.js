@@ -1,6 +1,7 @@
 import React from "react";
 import './NavBar.css';
 import { useNavigate } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -13,27 +14,23 @@ const NavBar = () => {
       navigate('/signup');
   };
 
-  const handleContactClick = () => {
-      navigate('/contact');
-  }
   return (
 
     <nav className="navbar-first">
       <div className="navbar-first-content">
         <div className='navbar-first-logo-name'>
           <div className='navbar-secondary-logo-image'/>
-          <a href='/home'>MentUp</a>
+          <Link to='/home'>MentUp</Link>
         </div>
         <div className='navbar-first-apply-mentorship'>
-          <a href="/applymentorship">Mentorluk İçin Başvur</a>
+          <Link to="/applymentorship">Mentorluk İçin Başvur</Link>
         </div>
         <div className='navbar-first-items-right-col'>
           <div className="navbar-first-items">
-            <a className="navbar-first-items-browse-mentors" href="/browsementors">Mentorlara Göz At</a>
+            <Link className="navbar-first-items-browse-mentors" to="/browsementors">Mentorlara Göz At</Link>
             {/* <a className="navbar-first-itemss-mentors" href="/mentors">Mentorlarımız</a> */}
-            {/* <a className="navbar-first-items-contact" href="/contact">İletişim</a> */}
-            <button className="navbar-first-items-contact-button" onClick={handleContactClick}>İletişim</button>
-            <a className="navbar-first-items-about-us" href="/aboutus">Hakkımızda</a>
+            <Link className="navbar-first-items-contact" to="/contact">İletişim</Link>
+            <Link className="navbar-first-items-about-us" to="/aboutus">Hakkımızda</Link>
           </div>
           <div className="navbar-first-auth-buttons">
             <button className="navbar-first-login-button" onClick={handleLoginClick}>Giriş Yap</button>

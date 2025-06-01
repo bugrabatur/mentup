@@ -3,6 +3,7 @@ import './Navbar2.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMessage, faBell, faAngleDown, faGear, faArrowRightFromBracket, faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const NavBar2 = () => {  
@@ -101,11 +102,12 @@ const NavBar2 = () => {
           </a>
         </div>
         <div className="navbar-secondary-apply-mentorship">
-          <a href="/applymentorship">Mentorluk İçin Başvur</a>
+          {/* <a href="/applymentorship">Mentorluk İçin Başvur</a> */}
+          <Link to="/applymentorship">Mentorluk İçin Başvur</Link>
         </div>
         <div className="navbar-secondary-items-right-col">
           <div className="navbar-secondary-items">
-            <a href="/browsementors">Mentorlara Göz At</a>
+            <Link to="/browsementors">Mentorlara Göz At</Link>
             {/* <a href="/mentors">Mentorlarımız</a> */}
             <a href="/appointments">Görüşmelerim</a>
             <a href="/appointmentrequests">Görüşme Taleplerim</a>
