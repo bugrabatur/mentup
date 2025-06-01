@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./BrowseMentors.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass, faAngleDown } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass, faAngleDown, faUser, faStar, faStarHalfAlt } from "@fortawesome/free-solid-svg-icons";
+import { faStar as faStarRegular } from "@fortawesome/free-regular-svg-icons";
 import axios from "axios";
 
 // Çoklu seçimli custom dropdown menu
@@ -91,6 +92,7 @@ const BrowseMentors = () => {
   const [selectedSlot, setSelectedSlot] = useState("");
   const [meetingReason, setMeetingReason] = useState("");
   const [loadingSlots, setLoadingSlots] = useState(false);
+  const [ratings, setRatings] = useState({});
 
   const menuRef = useRef(null);
 
@@ -133,8 +135,11 @@ const BrowseMentors = () => {
   // Mentorları ilk yüklemede çek
   useEffect(() => {
     setLoading(true);
+    const token = localStorage.getItem("token");
     axios
-      .get("http://localhost:5001/mentor/filterMentors")
+      .get("http://localhost:5001/mentor/getMentors", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
       .then((res) => {
         setAllMentors(res.data);
         setMentors(res.data);
@@ -146,6 +151,16 @@ const BrowseMentors = () => {
         setLoading(false);
       });
   }, []);
+
+  // Mentor ratinglerini çek
+  useEffect(() => {
+    mentors.forEach((mentor) => {
+      axios.get(`http://localhost:5001/reviews/mentor/${mentor.id}/averageRating`)
+        .then(res => {
+          setRatings(prev => ({ ...prev, [mentor.id]: res.data.rating }));
+        });
+    });
+  }, [mentors]);
 
   // Dropdown veya arama değişince mentorları filtrele
   useEffect(() => {
@@ -166,10 +181,11 @@ const BrowseMentors = () => {
     // Beceri alanı (industries) filtresi
     if (selectedSkills.length > 0) {
       filtered = filtered.filter((mentor) => {
-        if (!mentor.industries) return false;
+        const industries = mentor.documents?.[0]?.industries;
+        if (!industries) return false;
         try {
-          const industries = JSON.parse(mentor.industries);
-          return selectedSkills.some((skill) => industries.includes(skill));
+          const arr = JSON.parse(industries);
+          return selectedSkills.some((skill) => arr.includes(skill));
         } catch {
           return false;
         }
@@ -179,10 +195,11 @@ const BrowseMentors = () => {
     // Yazılım dilleri (skills) filtresi
     if (selectedLanguages.length > 0) {
       filtered = filtered.filter((mentor) => {
-        if (!mentor.skills) return false;
+        const skills = mentor.profile?.skills;
+        if (!skills) return false;
         try {
-          const skills = JSON.parse(mentor.skills);
-          return selectedLanguages.some((lang) => skills.includes(lang));
+          const arr = JSON.parse(skills);
+          return selectedLanguages.some((lang) => arr.includes(lang));
         } catch {
           return false;
         }
@@ -208,7 +225,7 @@ const BrowseMentors = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        `http://localhost:5001/mentor/availability/getMentorAvailability/${mentor.user_id}`,
+        `http://localhost:5001/mentor/availability/getMentorAvailability/${mentor.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setMentorSlots(res.data.slots);
@@ -245,7 +262,7 @@ const BrowseMentors = () => {
       await axios.post(
         "http://localhost:5001/appointments/createAppointment",
         {
-          mentor_id: modalMentor.user_id || modalMentor.id,
+          mentor_id: modalMentor.id,
           scheduled_date: slot.date,
           start_time: slot.start_time,
           end_time: slot.end_time,
@@ -333,42 +350,122 @@ const BrowseMentors = () => {
               ) : (
                 mentors.map((mentor, index) => (
                   <div
-                    key={index}
+                    key={mentor.id}
                     className="mentor-card"
                     onClick={() => openMentorModal(mentor)}
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer", position: "relative" }}
                   >
+                    {/* Rating Badge */}
+                    <div className="mentor-card-rating">
+                      {[...Array(5)].map((_, i) => {
+                        const rating = ratings[mentor.id];
+                        if (rating === null || rating === undefined) {
+                          return (
+                            <FontAwesomeIcon
+                              key={i}
+                              icon={faStarRegular}
+                              style={{ color: "#ccc", marginRight: 2 }}
+                            />
+                          );
+                        }
+                        if (i < Math.floor(rating)) {
+                          return (
+                            <FontAwesomeIcon
+                              key={i}
+                              icon={faStar}
+                              style={{ color: "#ff9800", marginRight: 2 }}
+                            />
+                          );
+                        }
+                        if (i < rating && rating < i + 1) {
+                          return (
+                            <FontAwesomeIcon
+                              key={i}
+                              icon={faStarHalfAlt}
+                              style={{ color: "#ff9800", marginRight: 2 }}
+                            />
+                          );
+                        }
+                        return (
+                          <FontAwesomeIcon
+                            key={i}
+                            icon={faStarRegular}
+                            style={{ color: "#ccc", marginRight: 2 }}
+                          />
+                        );
+                      })}
+                      <span style={{ marginLeft: 4, fontWeight: 500 }}>
+                        {ratings[mentor.id] !== undefined && ratings[mentor.id] !== null
+                          ? Number(ratings[mentor.id]).toFixed(1)
+                          : "Henüz puanlanmadı"}
+                      </span>
+                    </div>
                     <div
                       className="mentor-image"
                       style={{
-                        backgroundImage:
-                          mentor.profile && mentor.profile.photo_url
-                            ? `url(${mentor.profile.photo_url})`
-                            : mentor.short_photo_url
-                            ? `url(${mentor.short_photo_url})`
-                            : `url('/images/mentor.png')`,
                         width: 100,
                         height: 100,
                         borderRadius: "50%",
-                        backgroundSize: "cover",
-                        backgroundPosition: "center"
+                        backgroundColor: "#eee",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        overflow: "hidden"
                       }}
-                    ></div>
+                    >
+                      {mentor.profile && mentor.profile.photo_url && mentor.profile.photo_url.trim() !== "" ? (
+                        <img
+                          src={mentor.profile.photo_url}
+                          alt={`${mentor.name} ${mentor.surname}`}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "50%",
+                            objectFit: "cover"
+                          }}
+                          onError={e => { e.target.onerror = null; e.target.style.display = "none"; }}
+                        />
+                      ) : (
+                        <FontAwesomeIcon icon={faUser} style={{ fontSize: 48, color: "#bbb" }} />
+                      )}
+                    </div>
                     <div className="mentor-info">
                       <h3>{mentor.name} {mentor.surname}</h3>
+                      <p className="mentor-description">{mentor.profile?.bio || "Biyografi bulunamadı."}</p>
                       <div className="mentor-info-industries-skills-div">
                         <p className="mentor-title">
-                          {mentor.industries
-                            ? JSON.parse(mentor.industries).join(", ")
-                            : "Beceri alanları bulunamadı."}
+                          {
+                            (() => {
+                              let industriesArr = [];
+                              try {
+                                if (mentor.documents?.[0]?.industries) {
+                                  const val = mentor.documents[0].industries;
+                                  industriesArr = Array.isArray(val) ? val : JSON.parse(val);
+                                }
+                              } catch {}
+                              return industriesArr.length > 0
+                                ? industriesArr.join(", ")
+                                : "Beceri alanları bulunamadı.";
+                            })()
+                          }
                         </p>
                         <p className="mentor-title">
-                          {mentor.skills
-                            ? JSON.parse(mentor.skills).join(", ")
-                            : "Yazılım dilleri bulunamadı."}
+                          {
+                            (() => {
+                              let skillsArr = [];
+                              try {
+                                if (mentor.profile?.skills) {
+                                  const val = mentor.profile.skills;
+                                  skillsArr = Array.isArray(val) ? val : JSON.parse(val);
+                                }
+                              } catch {}
+                              return skillsArr.length > 0
+                                ? skillsArr.join(", ")
+                                : "Yazılım dilleri bulunamadı.";
+                            })()
+                          }
                         </p>
-                        </div>
-                      <p className="mentor-description">{mentor.bio || "Biyografi bulunamadı."}</p>
+                      </div>
                     </div>
                     <div className="mentor-actions">
                       <div className="browse-mentors-mentor-buttons">
@@ -376,14 +473,14 @@ const BrowseMentors = () => {
                           onClick={e => { e.stopPropagation(); openMentorModal(mentor); }}
                           className="schedule-button"
                         >
-                          Görüşme Planla
+                          Görüşme Talebinde Bulun
                         </button>
-                        <button
+                        {/* <button
                           className="browse-mentors-message-button"
                           onClick={e => e.stopPropagation()}
                         >
                           Mesaj At
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                   </div>
@@ -414,25 +511,45 @@ const BrowseMentors = () => {
             <div className="bm-modal-form-item">
               <label>Biyografi</label>
               <p className="bm-modal-bio-text">
-                {(modalMentor.profile && modalMentor.profile.bio) 
-                  ? modalMentor.profile.bio 
-                  : (modalMentor.bio || "Biyografi bulunamadı.")}
+                {modalMentor.profile?.bio || "Biyografi bulunamadı."}
               </p>
             </div>
             <div className="bm-modal-form-item">
               <label>Beceri Alanları</label>
               <p className="bm-modal-skills-text">
-                {modalMentor.industries
-                  ? JSON.parse(modalMentor.industries).join(", ")
-                  : "Belirtilmemiş"}
+                {
+                  (() => {
+                    let industriesArr = [];
+                    try {
+                      if (modalMentor.documents?.[0]?.industries) {
+                        const val = modalMentor.documents[0].industries;
+                        industriesArr = Array.isArray(val) ? val : JSON.parse(val);
+                      }
+                    } catch {}
+                    return industriesArr.length > 0
+                      ? industriesArr.join(", ")
+                      : "Belirtilmemiş";
+                  })()
+                }
               </p>
             </div>
             <div className="bm-modal-form-item">
               <label>Yazılım Dilleri</label>
               <p className="bm-modal-languages-text">
-                {modalMentor.skills
-                  ? JSON.parse(modalMentor.skills).join(", ")
-                  : "Belirtilmemiş"}
+                {
+                  (() => {
+                    let skillsArr = [];
+                    try {
+                      if (modalMentor.profile?.skills) {
+                        const val = modalMentor.profile.skills;
+                        skillsArr = Array.isArray(val) ? val : JSON.parse(val);
+                      }
+                    } catch {}
+                    return skillsArr.length > 0
+                      ? skillsArr.join(", ")
+                      : "Belirtilmemiş";
+                  })()
+                }
               </p>
             </div>
             <div className="bm-modal-form-item">

@@ -106,7 +106,7 @@ const NavBar2 = () => {
         <div className="navbar-secondary-items-right-col">
           <div className="navbar-secondary-items">
             <a href="/browsementors">Mentorlara Göz At</a>
-            <a href="/mentors">Mentorlarımız</a>
+            {/* <a href="/mentors">Mentorlarımız</a> */}
             <a href="/appointments">Görüşmelerim</a>
             <a href="/appointmentrequests">Görüşme Taleplerim</a>
             <a href="/contact">İletişim</a>

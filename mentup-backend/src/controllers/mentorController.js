@@ -1,17 +1,24 @@
-const { User, Profile, Mentor } = require('../models');
+const { User, Profile, Mentor, Document } = require('../models');
 const { Op } = require('sequelize');
 
 // Tüm mentorları getir (kullanıcı ve profil joinli)
 exports.getAllMentors = async (req, res) => {
   try {
-    const mentors = await Mentor.findAll({
-      attributes: ['user_id', 'name', 'surname', 'bio', 'industries', 'skills'],
+    const mentors = await User.findAll({
+      where: { role: 'mentor' },
+      attributes: ['id', 'name', 'surname', 'email'],
       include: [
         {
           model: Profile,
           as: 'profile',
-          attributes: ['photo_url'],
-          required: false
+          attributes: ['photo_url', 'bio', 'skills'],
+          required: false // <-- Eksik profile olsa da gelsin
+        },
+        {
+          model: Document,
+          as: 'documents',
+          attributes: ['industries'],
+          required: false // <-- Eksik document olsa da gelsin
         }
       ]
     });

@@ -300,25 +300,24 @@ export default function ChatWidget() {
     });
   };
 
-  // useEffect(() => {
-  //   if (selectedChatId !== null) {
-  //     const markAsRead = async () => {
-  //       const token = localStorage.getItem("token");
-  //       await fetch(`http://localhost:5001/message/chatroom/${selectedChatId}/mark-read`, {
-  //         method: "POST",
-  //         headers: { Authorization: `Bearer ${token}` }
-  //       });
-  //       const res = await fetch("http://localhost:5001/message/unread-counts", {
-  //         headers: { Authorization: `Bearer ${token}` }
-  //       });
-  //       const data = await res.json();
-  //       setUnreadCounts(data.unreadCounts || {});
-  //       // --- Buraya ekle ---
-  //       window.dispatchEvent(new Event("refreshUnreadCount"));
-  //     };
-  //     markAsRead();
-  //   }
-  // }, [selectedChatId]);
+  useEffect(() => {
+    if (selectedChatId !== null) {
+      const markAsRead = async () => {
+        const token = localStorage.getItem("token");
+        await fetch(`http://localhost:5001/message/chatroom/${selectedChatId}/mark-read`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const res = await fetch("http://localhost:5001/message/unread-counts", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        setUnreadCounts(data.unreadCounts || {});
+        window.dispatchEvent(new Event("refreshUnreadCount"));
+      };
+      markAsRead();
+    }
+  }, [selectedChatId]);
 
   useEffect(() => {
     if (!selectedChatId) return;
@@ -336,7 +335,7 @@ export default function ChatWidget() {
   const handleScroll = (e) => {
     const el = e.target;
     // Konsola yaz
-    console.log("scroll", el.scrollTop, el.scrollHeight, el.clientHeight);
+    // console.log("scroll", el.scrollTop, el.scrollHeight, el.clientHeight);
     if (el.scrollHeight - el.scrollTop - el.clientHeight > 100) {
       setShowScrollDown(true);
     } else {

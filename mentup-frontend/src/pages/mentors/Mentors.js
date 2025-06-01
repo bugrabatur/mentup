@@ -20,9 +20,9 @@ const Mentors = () => {
 
   useEffect(() => {
     mentors.forEach((mentor) => {
-      axios.get(`http://localhost:5001/reviews/mentor/${mentor.user_id}/averageRating`)
+      axios.get(`http://localhost:5001/reviews/mentor/${mentor.id}/averageRating`)
         .then(res => {
-          setRatings(prev => ({ ...prev, [mentor.user_id]: res.data.rating }));
+          setRatings(prev => ({ ...prev, [mentor.id]: res.data.rating }));
         });
     });
   }, [mentors]);
@@ -35,7 +35,7 @@ const Mentors = () => {
           <h1 className='mentors-section-title'>Mentorlarımız</h1>
           <div className='mentor-cards'>
             {mentors.map((mentor) => (
-              <div className='mentor-card' key={mentor.user_id} style={{ position: "relative" }}>
+              <div className='mentor-card' key={mentor.id} style={{ position: "relative" }}>
                 <div
                   className='mentor-card-image'
                   style={{
@@ -47,7 +47,7 @@ const Mentors = () => {
                   {/* Sağ üst köşede rating ve yıldızlar */}
                   <div className="mentor-card-rating">
                     {[...Array(5)].map((_, i) => {
-                      const rating = ratings[mentor.user_id];
+                      const rating = ratings[mentor.id]; // <-- DÜZELTİLDİ
                       if (rating === null || rating === undefined) {
                         return (
                           <FontAwesomeIcon
@@ -58,7 +58,6 @@ const Mentors = () => {
                         );
                       }
                       if (i < Math.floor(rating)) {
-                        // Dolu yıldız
                         return (
                           <FontAwesomeIcon
                             key={i}
@@ -68,7 +67,6 @@ const Mentors = () => {
                         );
                       }
                       if (i < rating && rating < i + 1) {
-                        // Yarım yıldız
                         return (
                           <FontAwesomeIcon
                             key={i}
@@ -77,7 +75,6 @@ const Mentors = () => {
                           />
                         );
                       }
-                      // Boş yıldız
                       return (
                         <FontAwesomeIcon
                           key={i}
@@ -87,8 +84,8 @@ const Mentors = () => {
                       );
                     })}
                     <span style={{ marginLeft: 4, fontWeight: 500 }}>
-                      {ratings[mentor.user_id] !== null && ratings[mentor.user_id] !== undefined
-                        ? Number(ratings[mentor.user_id]).toFixed(1)
+                      {ratings[mentor.id] !== null && ratings[mentor.id] !== undefined
+                        ? Number(ratings[mentor.id]).toFixed(1)
                         : "Ratingi yok"}
                     </span>
                   </div>
