@@ -12,6 +12,10 @@ const NavBar = () => {
   const handleSignupClick = () => {
       navigate('/signup');
   };
+
+  const handleContactClick = () => {
+      navigate('/contact');
+  }
   return (
 
     <nav className="navbar-first">
@@ -27,7 +31,8 @@ const NavBar = () => {
           <div className="navbar-first-items">
             <a className="navbar-first-items-browse-mentors" href="/browsementors">Mentorlara Göz At</a>
             {/* <a className="navbar-first-itemss-mentors" href="/mentors">Mentorlarımız</a> */}
-            <a className="navbar-first-items-contact" href="/contact">İletişim</a>
+            {/* <a className="navbar-first-items-contact" href="/contact">İletişim</a> */}
+            <button className="navbar-first-items-contact-button" onClick={handleContactClick}>İletişim</button>
             <a className="navbar-first-items-about-us" href="/aboutus">Hakkımızda</a>
           </div>
           <div className="navbar-first-auth-buttons">
