@@ -66,6 +66,7 @@ const ApplyMentorship = () => {
   const [experienceYears, setExperienceYears] = useState("");
   const [whyMentor, setWhyMentor] = useState("");
   const [hasApplied, setHasApplied] = useState(false);
+  const [tcNumber, setTcNumber] = useState("");
 
   const IndustryOptions = [
     "Yazılım Geliştirme",
@@ -165,6 +166,7 @@ const ApplyMentorship = () => {
     formData.append("email", email);
     formData.append("age", age);
     formData.append("degree_number", degreeNumber);
+    formData.append("tcNumber", tcNumber);
     formData.append("experience_years", experienceYears);
     formData.append("why_mentor", whyMentor);
     formData.append("industries", JSON.stringify(selectedIndustries));
@@ -180,17 +182,29 @@ const ApplyMentorship = () => {
         },
       });
 
-      alert("Başvurunuz başarıyla gönderildi!");
+      alert(response.data.message);
       console.log("Başvuru yanıtı:", response.data);
+      window.location.reload();
     } catch (err) {
-      console.error("Başvuru gönderilemedi:", err.response?.data || err.message);
-      alert("Başvuru sırasında bir hata oluştu.");
+      const errorMessage =
+        err.response?.data?.message || "Başvuru sırasında bir hata oluştu.";
+        alert(errorMessage); // ✅ Backend'den gelen mesajı göster
     }
   };
 
-  const handlCancelApplication = async () => {
-
-  }
+  const handleCancelApplication = async () => {
+    if (!window.confirm("Başvurunuzu iptal etmek istediğinize emin misiniz?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post("http://localhost:5001/mentor/cancel-application", {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert("Başvurunuz iptal edildi.");
+      window.location.reload();
+    } catch (err) {
+      alert("Başvuru iptal edilemedi.");
+    }
+  };
 
   return (
     <div className="apply-mentorship-container">
@@ -208,7 +222,7 @@ const ApplyMentorship = () => {
               </p>
 
               <button
-                onClick={handlCancelApplication}
+                onClick={handleCancelApplication}
               >
                 Başvurumu İptal Et
               </button>
@@ -267,7 +281,15 @@ const ApplyMentorship = () => {
                     />
                   </div>
                 </div>
-
+                <div className="apply-mentorship-tc">
+                  <label className="apply-mentorship-tc-label">TC Kimlik No</label>
+                  <input
+                    type="text"
+                    className="apply-mentorship-tc-input"
+                    value={tcNumber}
+                    onChange={(e) => setTcNumber(e.target.value)}
+                  />
+                </div>
                 <div className="apply-mentorship-exp">
                   <label className="apply-mentorship-exp-label">
                     Bilgisayar mühendisliği sektöründe kaç yıllık tecrübeniz var?

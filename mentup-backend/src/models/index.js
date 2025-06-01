@@ -33,6 +33,8 @@ db.AvailabilitySlot = AvailabilitySlot;
 db.ChatRoom = require('./chatroom')(sequelize, DataTypes);
 db.ChatRoomUser = require('./chatroomuser')(sequelize, DataTypes);
 db.DirectMessage = require('./directmessage')(sequelize, DataTypes);
+db.DiplomaRegistry = require('./diplomaRegistry')(sequelize, Sequelize.DataTypes),
+
 
 // models/index.js içinde:
 

@@ -1,4 +1,5 @@
 const { Document, User } = require('../models');
+const { validateDiplomaInfo } = require('../services/diplomaValidator');
 
 exports.createMentorApplication = async (req, res) => {
   const userId = req.user.id;
@@ -7,6 +8,7 @@ exports.createMentorApplication = async (req, res) => {
     surname, 
     age, 
     degree_number, 
+    tcNumber,
     experience_years, 
     why_mentor, 
     industries, 
@@ -49,6 +51,17 @@ exports.createMentorApplication = async (req, res) => {
       });
     }
 
+    const validation = await validateDiplomaInfo({
+      tc: tcNumber,
+      name,
+      surname,
+      diploma_number: degree_number
+    });
+
+    if (!validation.success) {
+      return res.status(400).json({ message: validation.error });
+    }
+
     // Dosya URL'ini oluştur
     const cvUrl = `${req.protocol}://${req.get('host')}/uploads/${cvFile.filename}`;
 
@@ -61,6 +74,7 @@ exports.createMentorApplication = async (req, res) => {
       cv_url: cvUrl,
       age,
       degree_number,
+      tcNumber,
       experience_years,
       why_mentor,
       industries,
@@ -91,6 +105,31 @@ exports.checkApplicationStatus = async (req, res) => {
     res.status(200).json({ hasApplied: !!existingApplication });
   } catch (err) {
     console.error('Başvuru durumu kontrol edilemedi:', err);
+    res.status(500).json({ message: 'Bir hata oluştu.', error: err.message });
+  }
+};
+
+exports.cancelMentorApplication = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const application = await Document.findOne({
+      where: {
+        user_id: userId,
+        type: 'mentor_application',
+        status: 'pending'
+      }
+    });
+
+    if (!application) {
+      return res.status(404).json({ message: 'Aktif başvuru bulunamadı.' });
+    }
+
+    // Başvuruyu tamamen silebilir veya status'unu "rejected" yapabilirsin:
+    await application.destroy();
+
+    res.json({ message: 'Başvuru iptal edildi.' });
+  } catch (err) {
+    console.error('Başvuru iptal edilemedi:', err);
     res.status(500).json({ message: 'Bir hata oluştu.', error: err.message });
   }
 };

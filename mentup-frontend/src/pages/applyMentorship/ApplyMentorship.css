@@ -311,3 +311,20 @@
   background-color: #26815b;
   color: #fff;
 }
+
+.apply-mentorship-tc {
+  margin-bottom: 20px;
+}
+
+.apply-mentorship-tc-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.apply-mentorship-tc-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}

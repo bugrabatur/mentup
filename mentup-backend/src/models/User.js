@@ -5,8 +5,8 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      name: { type: DataTypes.STRING, allowNull: false },
-      surname: { type: DataTypes.STRING, allowNull: false },
+      name: { type: DataTypes.STRING, set(value) { this.setDataValue('name', value.trim());}, allowNull: false },
+      surname: { type: DataTypes.STRING, set(value) { this.setDataValue('surname', value.trim());}, allowNull: false },
       email: { type: DataTypes.STRING, allowNull: false, unique: true },
       password: { type: DataTypes.STRING, allowNull: false },
       role: {
