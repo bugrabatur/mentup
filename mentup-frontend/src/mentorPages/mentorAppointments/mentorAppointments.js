@@ -193,14 +193,14 @@ const MentorAppointments = () => {
                             })}, {appt.start_time?.slice(0, 5)}-{appt.end_time?.slice(0, 5)}
                           </p>
                         </div>
-                        <div className="mentor-appointments-button-div">
+                        {/* <div className="mentor-appointments-button-div">
                           <button
                             className="mentor-appointments-review-button"
                             onClick={() => handleReviewClick(appt.id)}
                           >
                             Görüşmeyi Değerlendir
                           </button>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   ))

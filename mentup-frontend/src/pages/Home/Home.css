@@ -4,25 +4,50 @@
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  
     margin: 0;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     overflow-y: auto;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.hero-button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #26815b;
+  background-color: #006239;
+  color: #ffffff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-weight: 600;
+}
+
+.hero-button:hover {
+  background-color: #217953;
 }
 
   main .hero {
     text-align: left;
-    padding: 30px 50px;
     color:  #ffffff;
   }
     
   main .hero h1 {
     font-size: 35px;
+    font-weight: 500;
     margin-bottom: 20px;
     display: inline-block;
   }
     
   main .hero p {
-    font-size: 24px;
+    font-size: 18px;
     margin-bottom: 30px;
+    color: #ccc;
   }
   
   main .hero ul {
@@ -58,3 +83,129 @@
   .auth-buttons .register:hover {
     background-color: #3a3a3a;
   }
+
+  /* mentor-slider-section ve mentor-card için örnek stil */
+.home-mentor-slider-section {
+  margin: 40px 0;
+  padding: 0 40px;
+}
+
+.home-mentor-card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;  
+  overflow: visible;
+}
+
+.home-mentor-card {
+  background: #171717;
+  border-radius: 16px;
+  padding: 24px 0;
+  margin: 0 20px; /* Yatay boşluk artırıldı */
+  color: #fff;
+  min-width: 240px;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 16px 0 #00000033;
+  transition: transform 0.2s;
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  border: 1px solid #4d4d4d;
+}
+
+.home-mentor-description {
+  font-size: 16px;
+  text-align: center;
+  margin: 10px 50px;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+/* .home-mentor-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 32px 0 #6938ef55;
+  z-index: 10;
+} */
+.home-mentor-image {
+  margin-bottom: 12px;
+  border: 2px solid #6938ef;
+}
+.home-mentor-rating {
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+.home-mentor-skills span {
+  margin: 2px 4px;
+}
+
+.mentor-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
+}
+.star-icon {
+  color: #FFD700;
+  font-size: 20px;
+}
+
+.mentor-rating-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #232323;
+  color: #8e9291;
+  border-radius: 8px;
+  padding: 2px 10px 2px 8px;
+  font-weight: bold;
+  font-size: 16px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  box-shadow: 0 2px 8px #00000022;
+}
+
+.home-mentor-slider-section {
+  position: relative;
+  margin: 40px 0;
+  padding: 0 40px;
+}
+
+.home-slider-fade-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 160px;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+  background: linear-gradient(to right, #121212 80%, transparent 100%);
+}
+
+.home-slider-fade-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 160px;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+  background: linear-gradient(to left, #121212 80%, transparent 100%);
+}
+
+/* .shadow-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.7) 100%);
+  z-index: 5;
+} */

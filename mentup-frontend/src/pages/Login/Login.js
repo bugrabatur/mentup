@@ -48,9 +48,9 @@ const Login = () => {
       if (data.user.role === "admin") {
         navigate("/adminpanel");
       } else if (data.user.role === "mentee") {
-        navigate("/menteeprofile");
+        navigate("/home");
       } else if (data.user.role === "mentor") {
-        navigate("/mentorprofile");
+        navigate("/home");
       } else {
         setMessage("Bilinmeyen kullanıcı rolü!");
       }
