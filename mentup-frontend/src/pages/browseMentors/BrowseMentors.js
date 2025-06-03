@@ -432,39 +432,94 @@ const BrowseMentors = () => {
                     <div className="mentor-info">
                       <h3>{mentor.name} {mentor.surname}</h3>
                       <p className="mentor-description">{mentor.profile?.bio || "Biyografi bulunamadı."}</p>
-                      <div className="mentor-info-industries-skills-div">
-                        <p className="mentor-title">
-                          {
-                            (() => {
-                              let industriesArr = [];
-                              try {
-                                if (mentor.documents?.[0]?.industries) {
-                                  const val = mentor.documents[0].industries;
-                                  industriesArr = Array.isArray(val) ? val : JSON.parse(val);
-                                }
-                              } catch {}
-                              return industriesArr.length > 0
-                                ? industriesArr.join(", ")
-                                : "Beceri alanları bulunamadı.";
-                            })()
+
+                      {/* INDUSTRIES (Beceri Alanları) */}
+                      <div className="mentor-industries" style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        justifyContent: "center",
+                        gap: 6,
+                        marginBottom: 8
+                      }}>
+                        {(() => {
+                          let industries = mentor.profile?.industries;
+                          if (!industries && mentor.documents && mentor.documents.length > 0) {
+                            industries = mentor.documents[0].industries;
                           }
-                        </p>
-                        <p className="mentor-title">
-                          {
-                            (() => {
-                              let skillsArr = [];
-                              try {
-                                if (mentor.profile?.skills) {
-                                  const val = mentor.profile.skills;
-                                  skillsArr = Array.isArray(val) ? val : JSON.parse(val);
-                                }
-                              } catch {}
-                              return skillsArr.length > 0
-                                ? skillsArr.join(", ")
-                                : "Yazılım dilleri bulunamadı.";
-                            })()
+                          if (typeof industries === "string") {
+                            try {
+                              industries = JSON.parse(industries);
+                            } catch {
+                              industries = [industries];
+                            }
                           }
-                        </p>
+                          return industries && Array.isArray(industries)
+                            ? industries.map((industry, i) => (
+                                <span key={i} style={{
+                                  background: "#444",
+                                  color: "#fff",
+                                  borderRadius: 8,
+                                  padding: "3px 10px",
+                                  fontSize: 13,
+                                  margin: "2px"
+                                }}>{industry}</span>
+                              ))
+                            : <span style={{
+                                background: "#444",
+                                color: "#fff",
+                                borderRadius: 8,
+                                padding: "3px 10px",
+                                fontSize: 13
+                              }}>Sektör yok</span>
+                        })()}
+                      </div>
+
+                      {/* SKILLS (Yazılım Dilleri) */}
+                      <div className="mentor-skills" style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        justifyContent: "center",
+                        gap: 6
+                      }}>
+                        {(() => {
+                          if (!mentor.profile || !mentor.profile.skills) {
+                            return (
+                              <span style={{
+                                background: "#444",
+                                color: "#fff",
+                                borderRadius: 8,
+                                padding: "3px 10px",
+                                fontSize: 13
+                              }}>Beceri yok</span>
+                            );
+                          }
+                          let skills = mentor.profile.skills;
+                          if (typeof skills === "string") {
+                            try {
+                              skills = JSON.parse(skills);
+                            } catch {
+                              skills = [skills];
+                            }
+                          }
+                          return skills && Array.isArray(skills)
+                            ? skills.map((skill, i) => (
+                                <span key={i} style={{
+                                  background: "#6938ef",
+                                  color: "#fff",
+                                  borderRadius: 8,
+                                  padding: "3px 10px",
+                                  fontSize: 13,
+                                  margin: "2px"
+                                }}>{skill}</span>
+                              ))
+                            : <span style={{
+                                background: "#444",
+                                color: "#fff",
+                                borderRadius: 8,
+                                padding: "3px 10px",
+                                fontSize: 13
+                              }}>Beceri yok</span>
+                        })()}
                       </div>
                     </div>
                     <div className="mentor-actions">

@@ -1,12 +1,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import './NotFound.css'; // CSS dosyasını dahil edin
+import './NotFound.css';
 
 const NotFound = () => {
   const navigate = useNavigate();
+  const role = localStorage.getItem('role');
 
   const handleGoHome = () => {
-    navigate('/home'); // Ana sayfaya yönlendir
+    if (role === 'admin') {
+      navigate('/adminpanel');
+    } else {
+      navigate('/home');
+    }
   };
 
   return (
@@ -14,7 +19,7 @@ const NotFound = () => {
       <h1 className="notfound-title">404 - Sayfa Bulunamadı</h1>
       <p className="notfound-description">Bu sayfaya erişim izniniz yok.</p>
       <button className="notfound-button" onClick={handleGoHome}>
-        Ana Sayfaya Dön
+        {role === 'admin' ? 'Mentorluk Başvurularına Dön' : 'Ana Sayfaya Dön'}
       </button>
     </div>
   );

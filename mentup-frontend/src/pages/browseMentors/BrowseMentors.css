@@ -268,6 +268,7 @@
   transition: background-color 0.3s ease;
   font-weight: bold;
   width: 100%;
+  margin-top: 20px;
 }
 
 .schedule-button {
@@ -560,4 +561,37 @@
 
 .mentor-card {
   position: relative;
+}
+
+.mentor-industries {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.mentor-industries span {
+  background: #444;
+  color: #fff;
+  border-radius: 8px;
+  padding: 3px 10px;
+  font-size: 13px;
+  margin: 2px;
+}
+
+.mentor-skills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.mentor-skills span {
+  background: #6938ef;
+  color: #fff;
+  border-radius: 8px;
+  padding: 3px 10px;
+  font-size: 13px;
+  margin: 2px;
 }

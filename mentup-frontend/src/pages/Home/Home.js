@@ -222,7 +222,7 @@ const sliderSettings = {
                               borderRadius: 8,
                               padding: "3px 10px",
                               fontSize: 13
-                            }}>Sektör yok</span>
+                            }}>Beceri alanı yok</span>
                       })()}
                     </div>
                     {/* SKILLS */}
@@ -244,7 +244,7 @@ const sliderSettings = {
                             borderRadius: 8,
                             padding: "3px 10px",
                             fontSize: 13
-                          }}>Beceri yok</span>
+                          }}>Yazılım dili yok</span>
                       }
                     </div>
                   </div>

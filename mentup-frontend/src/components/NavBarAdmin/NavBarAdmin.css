@@ -1,0 +1,172 @@
+.navbar-admin {
+  background-color: #121212;
+  border-bottom: 1px solid rgb(59, 59, 59);
+}
+
+.navbar-admin-content {
+  display: flex;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  text-align: center;
+  flex-direction: row;
+}
+
+.navbar-admin-logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #fff;
+  transition: color 0.3s ease-in-out;
+}
+
+.navbar-admin-logo-link:hover {
+  color: #006239;
+}
+
+.navbar-admin-logo-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-image: url('../../images/mentup-logo.png');
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  background-color: transparent;
+  object-fit: cover;
+  margin-right: 8px;
+}
+
+.navbar-admin-logo-name {
+  display: flex;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-admin-link {
+  color: #ffffff;
+  text-decoration: none;
+  margin: 0 10px;
+  transition: color 0.3s ease-in-out;
+  font-size: 14px;
+  font-weight: 550;
+}
+
+.navbar-admin-link:hover {
+  color: #006239;
+}
+
+.navbar-admin-profile {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-admin-profile-button {
+  width: 80px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 30px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  gap: 8px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.navbar-admin-profile-button:hover {
+  transform: scale(1.15);
+}
+
+.navbar-admin-dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  background-color: #171717;
+  border: 1px solid rgb(59, 59, 59);
+  border-radius: 4px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-width: 230px;
+  max-width: 300px;
+  box-sizing: border-box;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.navbar-admin-profile-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px;
+  border-bottom: 1px solid #4a4a4a;
+}
+
+.navbar-admin-profile-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin-left: 10px;
+}
+
+.navbar-admin-profile-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  text-align: start;
+  margin-left: 5px;
+}
+
+.navbar-admin-dropdown-menu li {
+  padding: 0; /* padding'ı kaldır */
+}
+
+/* Sadece çıkış yap satırı için tüm satırı kapsayan hover */
+.navbar-admin-dropdown-menu-logout {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  text-decoration: none;
+  background-color: transparent;
+  color: #fff;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 15px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 1;
+  transition: background-color 0.3s, opacity 0.3s, transform 0.3s;
+  gap: 10px;
+  width: 100%; /* Tüm satırı kapsasın */
+  border: none;
+}
+
+/* Sadece çıkış yap satırı hover */
+.navbar-admin-dropdown-menu-logout:hover,
+.navbar-admin-dropdown-menu li:has(.navbar-admin-dropdown-menu-logout):hover .navbar-admin-dropdown-menu-logout {
+  background-color: #1d1d1d;
+  opacity: 0.85;
+}

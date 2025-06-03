@@ -462,7 +462,7 @@
   right: 180px;
   bottom: 90px;
   z-index: 9999;
-  background: #35856f;
+  background: none;
   color: #fff;
   border: none;
   border-radius: 50%;
@@ -471,12 +471,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  /* box-shadow: 0 2px 8px rgba(0,0,0,0.15); */
   cursor: pointer;
   font-size: 20px;
   transition: background-color 0.2s ease;
 }
 
 .chat-widget-scroll-down-btn:hover {
-  background: #1e532a;
+  background: #3b3b3b;
 }

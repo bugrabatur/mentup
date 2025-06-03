@@ -27,15 +27,16 @@
 /* Ana sayfaya dön butonu */
 .notfound-button {
   padding: 10px 20px;
-  font-size: 16px;
-  background-color: #28a745; /* Yeşil renk */
-  color: #fff;
-  border: none;
-  border-radius: 5px;
+  border-radius: 8px;
+  border: 1px solid #26815b;
+  background-color: #006239;
+  color: #ffffff;
+  font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-weight: 600;
 }
 
 .notfound-button:hover {
-  background-color: #218838; /* Hover durumunda daha koyu yeşil */
+  background-color: #217953;
 }

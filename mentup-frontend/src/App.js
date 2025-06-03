@@ -31,6 +31,7 @@ import MentorAvailabilitySettings from './mentorPages/mentorAvailabilitySettings
 import MentorAppointmentRequests from './mentorPages/mentorAppointmentRequests/mentorAppointmentRequests';
 import AppointmentRequests from './pages/appointmentRequests/appointmentRequests';
 import ChatWidget from './components/chatWidget/chatWidget';
+import NavBarAdmin from './components/NavBarAdmin/NavBarAdmin';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -41,7 +42,6 @@ function App() {
     const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
     if (token) {
-      // Rolü localStorage'dan al
       const storedRole = localStorage.getItem('role');
       setRole(storedRole);
     } else {
@@ -61,60 +61,149 @@ function App() {
     } else if (role === "mentor") {
       navbarComponent = <Navbar3 />;
     } else if (role === "admin") {
-      navbarComponent = <Navbar2 />;
+      navbarComponent = <NavBarAdmin />;
     }
   }
 
   return (
     <div className="App">
       {navbarComponent}
-      {!noNavbarRoutes.includes(location.pathname) && <ChatWidget />}
+      {!noNavbarRoutes.includes(location.pathname) && role !== "admin" && <ChatWidget />}
       <Routes>
-        <Route path="/" element={<Navigate to="/home" />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/menteeprofile" element={<MenteeProfile />} />
-        <Route path="/aboutus" element={<AboutUs />} />
-        <Route path="/accountsettings" element={<AccountSettings />} />
-        <Route path="/applymentorship" element={<ApplyMentorship />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/mentorreview" element={<MentorReview />} />
-        <Route path="/mentorlogin" element={<MentorLogin />} />
-        <Route path="/browsementors" element={<BrowseMentors />} />
-        <Route path="/appointments" element={<Appointments />} />
-        <Route path="/mentors" element={<Mentors />} />
-        <Route path="/videochat" element={<VideoChat />} />
-        <Route
-          path="/adminpanel"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <AdminPanel />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/notfound" element={<NotFound />} />
-        <Route path="/mentorprofile" element={<MentorProfile />} />
-        <Route
-          path="/mentoraccountsettings"
-          element={<MentorAccountSettings />}
-        />
-        <Route path="/mentorappointments" element={<MentorAppointments />} />
-        <Route
-          path="/mentoravailabilitysettings"
-          element={<MentorAvailabilitySettings />}
-        />
-        <Route
-          path="/mentorappointmentrequests"
-          element={<MentorAppointmentRequests />}
-        />
-        <Route path="/appointmentrequests" element={<AppointmentRequests />} />
-        <Route path="/mentorreview/:mentor_id/:appointment_id" element={<MentorReview />} />
+        {role === "admin" ? (
+          <>
+            <Route
+              path="/adminpanel"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <AdminPanel />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<NotFound />} />
+          </>
+        ) : (
+          <>
+            <Route path="/" element={<Navigate to="/home" />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route
+              path="/menteeprofile"
+              element={
+                <ProtectedRoute requiredRole="mentee">
+                  <MenteeProfile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/aboutus"
+              element={<AboutUs />}
+            />
+            <Route
+              path="/accountsettings"
+              element={
+                <ProtectedRoute requiredRole="mentee">
+                  <AccountSettings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/applymentorship"
+              element={<ApplyMentorship />}
+            />
+            <Route path="/contact" element={<Contact />} />
+            <Route
+              path="/mentorreview"
+              element={
+                <ProtectedRoute requiredRole="mentee">
+                  <MentorReview />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/mentorlogin" element={<MentorLogin />} />
+            <Route
+              path="/browsementors"
+              element={
+                <ProtectedRoute requiredRole="mentee">
+                  <BrowseMentors />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/appointments"
+              element={
+                <ProtectedRoute requiredRole="mentee">
+                  <Appointments />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/mentors" element={<Mentors />} />
+            <Route path="/videochat" element={<VideoChat />} />
+            <Route
+              path="/mentorprofile"
+              element={
+                <ProtectedRoute requiredRole="mentor">
+                  <MentorProfile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/mentoraccountsettings"
+              element={
+                <ProtectedRoute requiredRole="mentor">
+                  <MentorAccountSettings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/mentorappointments"
+              element={
+                <ProtectedRoute requiredRole="mentor">
+                  <MentorAppointments />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/mentoravailabilitysettings"
+              element={
+                <ProtectedRoute requiredRole="mentor">
+                  <MentorAvailabilitySettings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/mentorappointmentrequests"
+              element={
+                <ProtectedRoute requiredRole="mentor">
+                  <MentorAppointmentRequests />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/appointmentrequests"
+              element={
+                <ProtectedRoute requiredRole="mentee">
+                  <AppointmentRequests />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/mentorreview/:mentor_id/:appointment_id"
+              element={
+                <ProtectedRoute requiredRole="mentee">
+                  <MentorReview />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/forgotpassword" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/notfound" element={<NotFound />} />
+            <Route path="*" element={<NotFound />} />
+          </>
+        )}
       </Routes>
-
     </div>
   );
 }
