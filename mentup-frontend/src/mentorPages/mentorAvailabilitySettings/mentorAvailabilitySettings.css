@@ -41,3 +41,47 @@
 .mentor-availability-settings-button:hover {
   background-color: #217953;
 }
+
+@media (max-width: 700px) {
+  .mentor-availability-settings-container {
+    width: 100vw !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  .mentor-availability-settings-title {
+    font-size: 20px !important;
+    margin-top: 18px !important;
+    margin-bottom: 18px !important;
+    text-align: center !important;
+  }
+
+  /* Takvim kapsayıcısı yatay kaydırılabilir */
+  .calendar-mobile-scroll-wrapper {
+    width: 100vw !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 18px !important;
+  }
+
+  /* Takvim genişliği min 550px, böylece scroll olur */
+  .calendar-mobile-scroll-wrapper > * {
+    min-width: 550px !important;
+    max-width: 700px;
+  }
+
+  .mentor-availability-settings-button-div {
+    margin-top: 18px !important;
+    margin-bottom: 150px !important;
+    width: 100vw !important;
+    padding: 0 12px !important;
+  }
+
+  .mentor-availability-settings-button {
+    width: 100% !important;
+    min-width: 0 !important;
+    font-size: 16px !important;
+    height: 44px !important;
+  }
+}

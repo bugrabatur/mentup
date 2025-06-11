@@ -204,3 +204,57 @@
     margin-top: 20px;
     text-align: center;
   }
+
+  @media (max-width: 600px) {
+  .login-container {
+    padding: 0;
+    height: 100vh;
+    min-height: 100vh;
+  }
+
+  .login-box {
+    max-width: 60vw;
+    min-width: 0;
+    padding: 2rem;
+    border-radius: 10px;
+    border: 1px solid rgb(59, 59, 59);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .login-logo-name a {
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+
+  .login-title {
+    font-size: 18px;
+  }
+
+  .login-box h2 {
+    font-size: 13px;
+  }
+
+  .input-group input {
+    font-size: 15px;
+    height: 38px;
+    padding-left: 10px;
+  }
+
+  .login-button-login-page {
+    height: 38px;
+    font-size: 15px;
+    margin-top: 18px;
+  }
+
+  .login-page-signup-div {
+    font-size: 13px;
+    margin-top: 14px;
+  }
+
+  .options {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+  }
+}

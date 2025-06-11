@@ -23,7 +23,7 @@
 
 .contact-form {
   background-color: #171717;
-  width: 60%;
+  width:75%;
   margin: 40px auto;
   padding: 30px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -134,4 +134,16 @@ transform: scale(1.02);
 
 .contact-container::-webkit-scrollbar-track {
   background: #101828;
+}
+
+@media (max-width: 700px) {
+  .contact-form-info-text,
+  .contact-form-section a,
+  .contact-form-office-hours a {
+    text-align:center;
+  }
+
+  .contact-form {
+    margin-bottom: 100px !important;
+  }
 }

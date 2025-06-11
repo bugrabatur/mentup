@@ -255,26 +255,34 @@ const MentorProfile = () => {
         <div className="mentor-profile-form">
           <h1 className="mentor-profile-title">Ayarlar</h1>
           <div className="mentor-profile-all-settings-form">
-            <div className="photo-settings-card">
-              <ProfilePhotoUpload 
-                onPhotoChange={handlePhotoChange}
-                profilePhoto={profilePhoto}
-              />
-              <ProfileSettingsBar/>
-            </div>  
-            <div>
+            <div className="left-column">
+              <div className="photo-settings-card">
+                <ProfilePhotoUpload
+                  onPhotoChange={handlePhotoChange}
+                  profilePhoto={profilePhoto}
+                />
+              </div>
+              <ProfileSettingsBar />
+            </div>
+            <div className="right-column">
               <div className="mentor-profile-settings-form">
-                <h2 className="mentor-profile-settings-form-title">Profil Ayarları</h2>
-                <h6 className="mentor-profile-required-info-text">Yanında * sembolü olan yerlerin doldurulması zorunludur.</h6>
+                <h2 className="mentor-profile-settings-form-title">
+                  Profil Ayarları
+                </h2>
+                <h6 className="mentor-profile-required-info-text">
+                  Yanında * sembolü olan yerlerin doldurulması zorunludur.
+                </h6>
                 <div className="mentor-profile-settings-infos">
                   <div className="mentor-profile-settings-name-surname">
                     <div className="mentor-profile-settings-name">
-                      <label className="mentor-profile-settings-name-label">İsim</label>
+                      <label className="mentor-profile-settings-name-label">
+                        İsim
+                      </label>
                       <span className="mentor-profile-span-required"> *</span>
                       <div className="mentor-profile-settings-name-input-div">
-                        <input 
-                          type="text" 
-                          className="mentor-profile-settings-name-input" 
+                        <input
+                          type="text"
+                          className="mentor-profile-settings-name-input"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           placeholder="John"
@@ -282,12 +290,14 @@ const MentorProfile = () => {
                       </div>
                     </div>
                     <div className="mentor-profile-settings-surname">
-                      <label className="mentor-profile-settings-surname-label">Soyisim</label>
+                      <label className="mentor-profile-settings-surname-label">
+                        Soyisim
+                      </label>
                       <span className="mentor-profile-span-required"> *</span>
                       <div className="mentor-profile-settings-surname-input-div">
-                        <input 
-                          type="text" 
-                          className="mentor-profile-settings-surname-input" 
+                        <input
+                          type="text"
+                          className="mentor-profile-settings-surname-input"
                           value={surname}
                           onChange={(e) => setSurname(e.target.value)}
                           placeholder="Doe"
@@ -298,11 +308,13 @@ const MentorProfile = () => {
 
                   {/* Bio Field */}
                   <div className="mentor-profile-settings-bio">
-                    <label className="mentor-profile-settings-bio-label">Biyografi</label>
+                    <label className="mentor-profile-settings-bio-label">
+                      Biyografi
+                    </label>
                     <div className="mentor-profile-settings-bio-input-div">
-                      <input 
-                        type="text" 
-                        className="mentor-profile-settings-bio-input" 
+                      <input
+                        type="text"
+                        className="mentor-profile-settings-bio-input"
                         value={bio}
                         onChange={(e) => setBio(e.target.value)}
                         placeholder="Biyografi..."
@@ -312,25 +324,33 @@ const MentorProfile = () => {
 
                   {/* Phone Field */}
                   <div className="mentor-profile-settings-phone">
-                    <label className="mentor-profile-settings-phone-label">Telefon Numarası</label>
+                    <label className="mentor-profile-settings-phone-label">
+                      Telefon Numarası
+                    </label>
                     <span className="mentor-profile-span-required"> *</span>
                     <div className="mentor-profile-settings-phone-input-div">
-                      <input 
-                        type="text" 
-                        className="mentor-profile-settings-phone-input" 
+                      <input
+                        type="text"
+                        className="mentor-profile-settings-phone-input"
                         value={phone}
                         onChange={handlePhoneChange}
                         placeholder="555 555 5555"
                       />
-                      {phoneError && <p style={{ color: 'red' }}>{phoneError}</p>}
+                      {phoneError && (
+                        <p style={{ color: "red", marginBottom: "20px" }}>
+                          {phoneError}
+                        </p>
+                      )}
                     </div>
                   </div>
 
                   <div className="mentor-profile-settings-college">
-                    <label className="mentor-profile-settings-college-label">Okuduğunuz/Mezun Olduğunuz Okul</label>
+                    <label className="mentor-profile-settings-college-label">
+                      Okuduğunuz/Mezun Olduğunuz Okul
+                    </label>
                     <div className="mentor-profile-settings-college-input-div">
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={college}
                         className="mentor-profile-settings-college-input"
                         onChange={(e) => setCollege(e.target.value)}
@@ -358,18 +378,20 @@ const MentorProfile = () => {
                       label="Beceri Alanları"
                     />
                   </div> */}
-                <div className="mentor-profile-settings-college">
-                  <label className="mentor-profile-settings-college-label">Beceri Alanları</label>
-                  <div className="mentor-profile-settings-college-input-div">
-                    <input
-                      type="text"
-                      className="mentor-profile-settings-college-input"
-                      value={industries.join(", ")}
-                      readOnly
-                      placeholder="Beceri alanlarınız burada gözükecek"
-                    />
+                  <div className="mentor-profile-settings-college">
+                    <label className="mentor-profile-settings-college-label">
+                      Beceri Alanları
+                    </label>
+                    <div className="mentor-profile-settings-college-input-div">
+                      <input
+                        type="text"
+                        className="mentor-profile-settings-college-input"
+                        value={industries.join(", ")}
+                        readOnly
+                        placeholder="Beceri alanlarınız burada gözükecek"
+                      />
+                    </div>
                   </div>
-                </div>
 
                   <div className="mentor-profile-settings-industries">
                     <CustomDropdown
@@ -389,10 +411,11 @@ const MentorProfile = () => {
                   </div>
 
                   <div className="mentor-profile-settings-button-save-div">
-                    <button 
-                      type="button" 
-                      className="mentor-profile-settings-button-save" 
-                      onClick={handleSaveClick}>
+                    <button
+                      type="button"
+                      className="mentor-profile-settings-button-save"
+                      onClick={handleSaveClick}
+                    >
                       Kaydet
                     </button>
                   </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import '../NavBar2/Navbar2.css'; // Aynı stilleri kullanıyoruz
+import './Navbar3.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMessage, faBell, faAngleDown, faGear, faArrowRightFromBracket, faCircleUser, faCalendarDays } from "@fortawesome/free-solid-svg-icons";
+import { faMessage, faBell, faAngleDown, faGear, faArrowRightFromBracket, faCircleUser, faCalendarDays, faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -11,6 +11,7 @@ const Navbar3 = () => {
   const [userSurname, setUserSurname] = useState('');
   const [photo_url, setPhoto_url] = useState('');
   const [totalUnread, setTotalUnread] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,6 +62,7 @@ const Navbar3 = () => {
       );
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      localStorage.removeItem('role');
       navigate('/login');
     } catch (e) {
       console.warn('Server logout hatası (yine de devam ediyoruz):', e);
@@ -88,19 +90,143 @@ const Navbar3 = () => {
     window.dispatchEvent(new Event("openChatWidget"));
   };
 
+  // Mobilde gösterilecek menü linkleri
+  const mobileMenuLinks = (
+    <div className="navbar-secondary-mobile-menu">
+      <a href="/mentorprofile" onClick={() => setMobileMenuOpen(false)}>Profilimi Görüntüle</a>
+      <a href="/mentoravailabilitysettings" onClick={() => setMobileMenuOpen(false)}>Uygunluk Ayarları</a>
+      <a href="/mentorappointments" onClick={() => setMobileMenuOpen(false)}>Görüşmelerim</a>
+      <a href="/mentorappointmentrequests" onClick={() => setMobileMenuOpen(false)}>Görüşme Taleplerim</a>
+      <a href="/contact" onClick={() => setMobileMenuOpen(false)}>İletişim</a>
+      <a href="/aboutus" onClick={() => setMobileMenuOpen(false)}>Hakkımızda</a>
+      <a href="/mentoraccountsettings" onClick={() => setMobileMenuOpen(false)}>Hesap Ayarları</a>
+    </div>
+  );
+
   return (
     <nav className="navbar-secondary">
       <div className="navbar-secondary-content">
+        {/* Sol: Logo ve MentUp */}
         <div className="navbar-secondary-logo-name">
           <a href="/home" className="navbar-secondary-logo-link">
             <div className="navbar-secondary-logo-image" />
             <span>MentUp</span>
           </a>
         </div>
-        <div className="navbar-secondary-apply-mentorship">
+        {/* Mobilde: Orta/Sağ ikonlar */}
+        <div className="navbar-secondary-options navbar-mobile-only">
+          <button className="navbar-secondary-messages-button" onClick={handleOpenChatWidget} style={{ position: "relative" }}>
+            <FontAwesomeIcon icon={faMessage} style={{ color: "white" }} />
+            {totalUnread > 0 && (
+              <span className="navbar-unread-badge">{totalUnread}</span>
+            )}
+          </button>
+          <button className="navbar-secondary-notifications-button">
+            <FontAwesomeIcon icon={faBell} style={{ color: "white" }} />
+          </button>
+          <div className="navbar-secondary-profile">
+            <button
+              className="navbar-secondary-profile-button"
+              onClick={toggleDropdown}
+            >
+              <div className="navbar-secondary-profile-icon">
+                {photo_url ? (
+                  <img
+                    src={photo_url}
+                    alt=""
+                    className="navbar-secondary-profile-image"
+                  />
+                ) : (
+                  <FontAwesomeIcon icon={faCircleUser} style={{ color: "white", fontSize: "24px" }} />
+                )}
+              </div>
+              <div className="navbar-secondary-arrow-down-icon">
+                <FontAwesomeIcon
+                  icon={faAngleDown}
+                  style={{ color: "white" }}
+                />
+              </div>
+            </button>
+            {isDropdownVisible && (
+              <ul className="navbar-secondary-dropdown-menu">
+                <li>
+                  <a 
+                    className="navbar-secondary-profile-info"
+                    href='/mentorprofile'
+                  >
+                    <div
+                      className="navbar-secondary-profile-dropdown-image"
+                      style={{
+                        backgroundImage: photo_url
+                          ? `url(${photo_url})`
+                          : "none",
+                      }}
+                    >
+                      {!photo_url && (
+                        <FontAwesomeIcon
+                          icon={faCircleUser}
+                          style={{ color: "grey", fontSize: "40px" }}
+                        />
+                      )}
+                    </div>
+                    <div className="navbar-profile-details">
+                      <span className="navbar-profile-name">{userName} {userSurname}</span>
+                      <p className="navbar-view-profile-link">Profili Görüntüle</p>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="navbar-secondary-dropdown-menu-settings"
+                    href="/mentoraccountsettings"
+                  >
+                    <FontAwesomeIcon
+                      icon={faGear}
+                      style={{ color: "white", marginRight: "10px" }}
+                    />
+                    Hesap Ayarları
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="navbar-secondary-dropdown-menu-availability"
+                    href="/mentoravailabilitysettings"
+                  >
+                    <FontAwesomeIcon
+                      icon={faCalendarDays}
+                      style={{ color: "white", marginRight: "10px" }}
+                    />
+                    Uygunluk Ayarları
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="navbar-secondary-dropdown-menu-logout"
+                    onClick={handleLogout}
+                  >
+                    <FontAwesomeIcon
+                      icon={faArrowRightFromBracket}
+                      style={{ color: "white", marginRight: "10px" }}
+                    />
+                    Çıkış Yap
+                  </a>
+                </li>
+              </ul>
+            )}
+          </div>
+        </div>
+        {/* Hamburger Icon (mobilde) */}
+        <button
+          className="navbar-secondary-hamburger navbar-mobile-only"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} size="1x" />
+        </button>
+        {/* Masaüstü menüler */}
+        <div className="navbar-secondary-apply-mentorship navbar-desktop-only">
           <a href="/mentoravailabilitysettings">Uygunluk Ayarları</a>
         </div>
-        <div className="navbar-secondary-items-right-col">
+        <div className="navbar-secondary-items-right-col navbar-desktop-only">
           <div className="navbar-secondary-items">
             <a href="/mentorappointments">Görüşmelerim</a>
             <a href="/mentorappointmentrequests">Görüşme Taleplerim</a>
@@ -210,6 +336,8 @@ const Navbar3 = () => {
           </div>
         </div>
       </div>
+      {/* Mobil Menü */}
+      {mobileMenuOpen && mobileMenuLinks}
     </nav>
   );
 };

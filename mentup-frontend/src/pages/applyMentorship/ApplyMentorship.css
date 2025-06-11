@@ -4,7 +4,7 @@
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  
   height: 100%;
   width: 100%;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
 }
 
 .apply-mentorship-div {
@@ -295,6 +295,7 @@
   max-height: 200px;
   overflow-y: auto;
   z-index: 1000;
+  -webkit-overflow-scrolling: touch;
 }
 
 .custom-dropdown-option {
@@ -312,10 +313,6 @@
   color: #fff;
 }
 
-.apply-mentorship-tc {
-  margin-bottom: 20px;
-}
-
 .apply-mentorship-tc-label {
   display: block;
   font-weight: bold;
@@ -327,4 +324,88 @@
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+@media (max-width: 700px) {
+  .apply-mentorship-div {
+    flex-direction: column;
+    align-items: center;
+    padding: 0 2vw;
+  }
+
+  .apply-mentorship-form {
+    width: 60vw;
+    min-width: 0;
+    max-width: 99vw;
+    margin-top: 16px;
+    border-radius: 12px;
+    padding: 0;
+  }
+
+  .apply-mentorship-infos {
+    margin: 12px;
+    padding: 0;
+  }
+
+  .apply-mentorship-name-surname-div,
+  .apply-mentorship-age-diploma-div {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .apply-mentorship-div-title h1 {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .apply-mentorship-div-title p {
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .apply-mentorship-div-title button {
+    font-size: 13px;
+    padding: 8px 12px;
+    margin-top: 24px;
+  }
+
+  .apply-mentorship-form label,
+  .custom-dropdown-label {
+    font-size: 13px;
+  }
+
+  .apply-mentorship-form input {
+    font-size: 14px;
+    height: 36px;
+    padding-left: 8px;
+  }
+  .custom-dropdown-input {
+    font-size: 14px;
+    height: 20px;
+    padding-left: 8px;
+  }
+
+  .apply-mentorship-button-certificate {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 8px;
+  }
+
+  .selected-file-name {
+    font-size: 13px;
+    margin-left: 4px;
+  }
+
+  .apply-mentorship-button-submit {
+    height: 36px;
+    font-size: 15px;
+    margin-top: 14px;
+  }
+
+  .custom-dropdown-menu {
+    max-height: 160px;
+    font-size: 14px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }

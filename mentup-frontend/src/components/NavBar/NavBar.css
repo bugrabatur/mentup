@@ -126,3 +126,181 @@
   background-color: #217953;
   transform: scale(1.05);
 }
+
+/* Hamburger icon sadece mobilde görünür */
+.navbar-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 26px;
+  cursor: pointer;
+  margin-left: auto;
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  z-index: 1300;
+}
+
+@media (max-width: 700px) {
+  .navbar-hamburger {
+    display: block;
+  }
+  .navbar-desktop-only {
+    display: none !important;
+  }
+  .navbar-mobile-menu {
+    padding-top: 70px; /* X ikonunun altında başlasın */
+  }
+}
+
+/* Mobil menü paneli */
+.navbar-mobile-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #181818;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 32px 24px 24px 24px;
+  animation: navbarMobileFadeIn 0.2s;
+}
+
+@keyframes navbarMobileFadeIn {
+  from { opacity: 0; transform: translateY(-20px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+.navbar-mobile-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 32px;
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  cursor: pointer;
+}
+
+.navbar-mobile-links {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 60px;
+  gap: 18px;
+}
+
+.navbar-mobile-links a,
+.navbar-mobile-links button {
+  color: #fff;
+  background: none;
+  border: none;
+  font-size: 20px;
+  text-align: left;
+  padding: 10px 0;
+  width: 100%;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 0.2s;
+  text-decoration: none;
+}
+
+.navbar-mobile-links a:hover,
+.navbar-mobile-links button:hover {
+  color: #00c37a;
+}
+
+@media (max-width: 700px) {
+  .navbar-first-content {
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 10px 0 !important;
+    gap: 0 !important;
+    position: relative;
+  }
+  .navbar-first-logo-name {
+    justify-content: stretch !important;
+    align-items: center !important;
+    /* margin: 0 auto !important; */
+    margin-left: 10px !important;
+    flex: 1 1 0;
+  }
+  .navbar-hamburger {
+    position: absolute !important;
+    right: 18px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    margin: 0 !important;
+  }
+  .navbar-desktop-only {
+    display: none !important;
+  }
+  .navbar-mobile-menu {
+    padding-top: 70px; /* X ikonunun altında başlasın */
+  }
+}
+
+/* Mobil menü paneli */
+.navbar-mobile-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #181818;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 32px 24px 24px 24px;
+  animation: navbarMobileFadeIn 0.2s;
+}
+
+@keyframes navbarMobileFadeIn {
+  from { opacity: 0; transform: translateY(-20px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+.navbar-mobile-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 32px;
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  cursor: pointer;
+}
+
+.navbar-mobile-links {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 60px;
+  gap: 18px;
+}
+
+.navbar-mobile-links a,
+.navbar-mobile-links button {
+  color: #fff;
+  background: none;
+  border: none;
+  font-size: 20px;
+  text-align: left;
+  padding: 10px 0;
+  width: 100%;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 0.2s;
+  text-decoration: none;
+}
+
+.navbar-mobile-links a:hover,
+.navbar-mobile-links button:hover {
+  color: #00c37a;
+}

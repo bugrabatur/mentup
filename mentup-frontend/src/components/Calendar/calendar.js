@@ -98,71 +98,71 @@ const Calendar = ({ slots = [], onSlotsChange }) => {
         <button onClick={handlePrevWeek}>Önceki Hafta</button>
         <button onClick={handleToday}>Bugüne Dön</button>
         <button onClick={handleNextWeek}>Sonraki Hafta</button>
-        <p className="calendar-info">
-          Görüşmeler 60 dakika sürmektedir.
-        </p>
+        <span className="calendar-info">Görüşmeler 60 dakika sürmektedir.</span>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>
-              {
-                // Görüntülenen haftanın ayı
-                currentMonday.toLocaleDateString("tr-TR", { month: "long" }).charAt(0).toUpperCase() +
-                currentMonday.toLocaleDateString("tr-TR", { month: "long" }).slice(1)
-              }
-            </th>
-            {days.map((d, i) => (
-              <th
-                key={i}
-                className={i === todayIdx ? "today-column" : ""}
-              >
-                {d}
-                <br />
-                {addDays(currentMonday, i).toLocaleDateString("tr-TR")}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {hours.map((hour) => (
-            <tr key={hour}>
-              <td className="simple-calendar-hours">{hour}:00</td>
-              {days.map((_, dayIdx) => {
-                const selected = isSelected(dayIdx, hour);
-                // Şu anki saat ve gün ise
-                const isNow =
-                  dayIdx === todayIdx &&
-                  hour === today.getHours();
-
-                let content = null;
-                if (selected) {
-                  content = (
-                    <div className="cell-content">
-                      <div style={{ fontSize: 13 }}>{`${hour}:00 - ${hour + 1}:00`}</div>
-                      <div style={{ fontSize: 10, marginTop: 2 }}>Uygun</div>
-                    </div>
-                  );
+      <div className="calendar-table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                {
+                  // Görüntülenen haftanın ayı
+                  currentMonday.toLocaleDateString("tr-TR", { month: "long" }).charAt(0).toUpperCase() +
+                  currentMonday.toLocaleDateString("tr-TR", { month: "long" }).slice(1)
                 }
-                return (
-                  <td
-                    key={dayIdx}
-                    className={[
-                      selected ? "selected" : "",
-                      dayIdx === todayIdx ? "today-column" : "",
-                      isNow ? "now-cell" : ""
-                    ].join(" ")}
-                    onClick={() => handleCellClick(dayIdx, hour)}
-                    style={{ cursor: "pointer", position: "relative", padding: 0 }}
-                  >
-                    {content}
-                  </td>
-                );
-              })}
+              </th>
+              {days.map((d, i) => (
+                <th
+                  key={i}
+                  className={i === todayIdx ? "today-column" : ""}
+                >
+                  {d}
+                  <br />
+                  {addDays(currentMonday, i).toLocaleDateString("tr-TR")}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {hours.map((hour) => (
+              <tr key={hour}>
+                <td className="simple-calendar-hours">{hour}:00</td>
+                {days.map((_, dayIdx) => {
+                  const selected = isSelected(dayIdx, hour);
+                  // Şu anki saat ve gün ise
+                  const isNow =
+                    dayIdx === todayIdx &&
+                    hour === today.getHours();
+
+                  let content = null;
+                  if (selected) {
+                    content = (
+                      <div className="cell-content">
+                        <div style={{ fontSize: 13 }}>{`${hour}:00 - ${hour + 1}:00`}</div>
+                        <div style={{ fontSize: 10, marginTop: 2 }}>Uygun</div>
+                      </div>
+                    );
+                  }
+                  return (
+                    <td
+                      key={dayIdx}
+                      className={[
+                        selected ? "selected" : "",
+                        dayIdx === todayIdx ? "today-column" : "",
+                        isNow ? "now-cell" : ""
+                      ].join(" ")}
+                      onClick={() => handleCellClick(dayIdx, hour)}
+                      style={{ cursor: "pointer", position: "relative", padding: 0 }}
+                    >
+                      {content}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <div className="simple-calendar-selected-slots">
         <b>Seçili Slotlar:</b>
         <ul>

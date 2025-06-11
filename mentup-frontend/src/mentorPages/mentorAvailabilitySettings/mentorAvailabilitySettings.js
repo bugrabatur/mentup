@@ -74,7 +74,9 @@ const MentorAvailabilitySettings = () => {
           Uygunluk Ayarları
         </h1>
       </div>
-      <Calendar slots={slots} onSlotsChange={handleSlotsChange} />
+      <div className="calendar-mobile-scroll-wrapper">
+        <Calendar slots={slots} onSlotsChange={handleSlotsChange} />
+      </div>
       <div className="mentor-availability-settings-button-div">
         <button
           className="mentor-availability-settings-button"

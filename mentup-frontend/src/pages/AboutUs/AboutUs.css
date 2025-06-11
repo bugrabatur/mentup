@@ -44,17 +44,20 @@
 }
 
 .about-us-form ul li {
+  position: relative;
   margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  line-height: 1.6;
+  padding-left: 28px; /* ikon kadar boşluk bırak */
   color: #8e9291;
+  line-height: 1.6;
+  display: block; /* önemli: flex değil block olmalı */
 }
 
 .list-icon {
   color: #006239;
   font-size: 12px;
-  margin-right: 10px;
+  position: absolute;
+  left: 0;
+  top: 10px; 
 }
 
 .about-us-section {
@@ -83,4 +86,13 @@
 
 .about-us-form-team-title svg {
   margin-right: 10px;
+}
+@media (max-width: 700px) {
+  .about-us-div {
+    margin-bottom: 100px !important;
+  }
+  .about-us-form {
+    width: 75%;
+  }
+
 }
