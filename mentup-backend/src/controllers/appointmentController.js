@@ -1,4 +1,4 @@
-const { Appointment, User, AvailabilitySlot } = require('../models');
+const { Appointment, User, Review } = require('../models');
 const { Op } = require("sequelize");
 
 // Görüşme talebi oluşturma
@@ -360,7 +360,6 @@ exports.getMentorPastAppointments = async (req, res) => {
 // Mentee'nin geçmiş (tamamlanmış) görüşmeleri
 exports.getMenteePastAppointments = async (req, res) => {
   try {
-    // --- BURAYA EKLE ---
     const now = new Date();
     const today = now.toISOString().slice(0, 10);
     const currentTime = now.toTimeString().slice(0, 5);
@@ -380,7 +379,6 @@ exports.getMenteePastAppointments = async (req, res) => {
         }
       }
     );
-    // --- EKLEME BİTTİ ---
 
     const mentee_id = req.user.id;
     const appointments = await Appointment.findAll({
@@ -401,10 +399,24 @@ exports.getMenteePastAppointments = async (req, res) => {
             },
           ],
         },
+        {
+          model: Review,
+          as: 'review',
+          attributes: ['id'],
+          required: false
+        }
       ],
       order: [['scheduled_date', 'DESC'], ['start_time', 'DESC']]
     });
-    res.status(200).json(appointments);
+
+    // isReviewed alanını ekle
+    const result = appointments.map(appt => {
+      const obj = appt.toJSON();
+      obj.isReviewed = !!obj.review;
+      return obj;
+    });
+
+    res.status(200).json(result);
   } catch (err) {
     console.error('Mentee geçmiş randevuları alınamadı:', err);
     res.status(500).json({ message: 'Geçmiş randevular alınırken hata oluştu.' });

@@ -16,7 +16,7 @@ const MentorAppointments = () => {
   };
 
   const handleJoinMeeting = () => {
-    navigate('/videochat');
+    navigate('/videochatdaily');
   };
 
   const handleReviewClick = (appointmentId) => {

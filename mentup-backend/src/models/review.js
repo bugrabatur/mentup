@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
       created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
+      },
+      is_reviewed: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
       }
     }, {
       tableName: 'reviews',

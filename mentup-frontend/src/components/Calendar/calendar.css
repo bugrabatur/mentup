@@ -124,11 +124,11 @@
   background-color: #3c3c3c !important; /* Sarımsı veya istediğin bir renk */
 }
 
-/* .disabled-slot {
+.disabled-slot {
   background: #360000 !important;
   color: #aaa !important;
   cursor: not-allowed !important;
-} */
+}
 
 .calendar-info-mobile {
   display: none;

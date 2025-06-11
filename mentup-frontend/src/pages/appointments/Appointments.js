@@ -45,7 +45,7 @@ const Appointments = () => {
   }, []);
 
   const handleJoinMeeting = () => {
-    navigate('/videochat');
+    navigate('/videochatdaily');
   };
 
   const handleReviewClick = (mentorId, appointmentId) => {
@@ -195,12 +195,14 @@ const Appointments = () => {
                           </p>
                         </div>
                         <div className="appointment-button-div">
-                          <button
-                            className="appointment-review-button"
-                            onClick={() => handleReviewClick(appt.mentor.id, appt.id)}
-                          >
-                            Görüşmeyi Değerlendir
-                          </button>
+                          {!appt.isReviewed && (
+                            <button
+                              className="appointment-review-button"
+                              onClick={() => handleReviewClick(appt.mentor.id, appt.id)}
+                            >
+                              Görüşmeyi Değerlendir
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>

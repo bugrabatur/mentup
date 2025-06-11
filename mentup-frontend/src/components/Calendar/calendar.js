@@ -92,6 +92,13 @@ const Calendar = ({ slots = [], onSlotsChange }) => {
     );
   };
 
+  const isPast = (dayIdx, hour) => {
+    const date = addDays(currentMonday, dayIdx);
+    const slotStart = new Date(date);
+    slotStart.setHours(hour, 0, 0, 0);
+    return slotStart < new Date();
+  };
+
   return (
     <div className="simple-calendar">
       <div className="calendar-controls">
@@ -149,10 +156,17 @@ const Calendar = ({ slots = [], onSlotsChange }) => {
                       className={[
                         selected ? "selected" : "",
                         dayIdx === todayIdx ? "today-column" : "",
-                        isNow ? "now-cell" : ""
+                        isNow ? "now-cell" : "",
+                        isPast(dayIdx, hour) ? "disabled-slot" : ""
                       ].join(" ")}
-                      onClick={() => handleCellClick(dayIdx, hour)}
-                      style={{ cursor: "pointer", position: "relative", padding: 0 }}
+                      onClick={() => {
+                        if (!isPast(dayIdx, hour)) handleCellClick(dayIdx, hour);
+                      }}
+                      style={{
+                        cursor: isPast(dayIdx, hour) ? "not-allowed" : "pointer",
+                        position: "relative",
+                        padding: 0
+                      }}
                     >
                       {content}
                     </td>

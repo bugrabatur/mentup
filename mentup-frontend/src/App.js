@@ -17,7 +17,6 @@ import MentorLogin from './pages/MentorLogin/MentorLogin';
 import BrowseMentors from './pages/browseMentors/BrowseMentors';
 import Appointments from './pages/appointments/Appointments';
 import Mentors from './pages/mentors/Mentors';
-import VideoChat from './pages/videochat/VideoChat';
 import AdminPanel from './admin/pages/adminPanel/adminPanel';
 import ForgotPassword from './pages/forgotPassword/ForgotPassword';
 import ResetPassword  from './pages/resetPassword/resetPassword';
@@ -32,6 +31,7 @@ import MentorAppointmentRequests from './mentorPages/mentorAppointmentRequests/m
 import AppointmentRequests from './pages/appointmentRequests/appointmentRequests';
 import ChatWidget from './components/chatWidget/chatWidget';
 import NavBarAdmin from './components/NavBarAdmin/NavBarAdmin';
+import VideoChatDaily from './pages/videochat/VideoChatDaily';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -140,7 +140,6 @@ function App() {
               }
             />
             <Route path="/mentors" element={<Mentors />} />
-            <Route path="/videochat" element={<VideoChat />} />
             <Route
               path="/mentorprofile"
               element={
@@ -201,6 +200,7 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/notfound" element={<NotFound />} />
             <Route path="*" element={<NotFound />} />
+            <Route path="/videochatdaily" element={<VideoChatDaily />} />
           </>
         )}
       </Routes>
