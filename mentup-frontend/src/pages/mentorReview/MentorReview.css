@@ -129,7 +129,7 @@
     background-color: #1d1d1d;
     color: #fff;
     resize: vertical;
-    margin-top: 5px;
+    margin-top: 10px;
     margin-bottom: 20px;
   }
   
@@ -151,3 +151,102 @@
     color: #fff;
     margin-bottom: 20px;
   }
+
+  @media (max-width: 700px) {
+  .mentor-review-container {
+    width: 100vw !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+    padding: 0 !important;
+  }
+
+  .mentor-review-form-div {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100vw !important;
+    min-width: 0 !important;
+  }
+
+  .mentor-review-form-div-title {
+    font-size: 1.3rem !important;
+    margin-top: 18px !important;
+    padding: 0 8px !important;
+  }
+
+  .mentor-review-form {
+    width: 96vw !important;
+    max-width: 370px !important;
+    min-width: 0 !important;
+    margin: 18px auto 24px auto !important;
+    padding: 12px 0 !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    background: #171717 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    margin-bottom: 120px !important;
+  }
+
+  .mentor-review-form-title {
+    font-size: 1.1rem !important;
+    margin-top: 18px !important;
+    padding: 0 8px !important;
+  }
+
+  .mentor-review-info-text {
+    font-size: 13px !important;
+    margin: 10px 0 0 0 !important;
+    padding: 0 20px !important;
+    gap: 10px !important;
+  }
+
+  .mentor-review-infos {
+    width: 100% !important;
+    padding: 0 20px !important;
+    box-sizing: border-box !important;
+  }
+
+  .mentor-review-q1,
+  .mentor-review-q2,
+  .mentor-review-q3,
+  .mentor-review-q4,
+  .mentor-review-q5,
+  .mentor-review-q6,
+  .mentor-review-q7 {
+    margin-left: 0 !important;
+    margin-top: 18px !important;
+    font-size: 14px !important;
+  }
+
+  .mentor-review-form label {
+    font-size: 13px !important;
+  }
+
+  .mentor-review-radio-group {
+    font-size: 13px !important;
+  }
+
+  .mentor-review-q7-textarea {
+    font-size: 13px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .mentor-review-button-div {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .mentor-review-button-submit {
+    width: 100% !important;
+    font-size: 15px !important;
+    margin-bottom: 18px !important;
+    margin-top: 14px !important;
+  }
+
+  .mentor-review-rating h3 {
+    font-size: 15px !important;
+    margin-bottom: 10px !important;
+  }
+}

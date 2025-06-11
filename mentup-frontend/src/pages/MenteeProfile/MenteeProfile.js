@@ -156,8 +156,8 @@ const MenteeProfile = () => {
         setSurname(user.surname || "");
         setCollege(profile.college || "");
         setLocation(profile.location || "");
-        setSkills(Array.isArray(profile.skills) ? profile.skills : JSON.parse(profile.skills || "[]")); // JSON string'i array'e dönüştür
-        setLanguages(Array.isArray(profile.languages) ? profile.languages : JSON.parse(profile.languages || "[]")); // JSON string'i array'e dönüştür
+        setSkills(Array.isArray(profile.skills) ? profile.skills : JSON.parse(profile.skills || "[]"));
+        setLanguages(Array.isArray(profile.languages) ? profile.languages : JSON.parse(profile.languages || "[]"));
         setProfilePhoto(profile.photo_url || null); 
         setBio(profile.bio || "");
         setPhone(profile.phone || "");
@@ -171,7 +171,7 @@ const MenteeProfile = () => {
   if (!tokenChecked) return <p>Yükleniyor...</p>;
 
   const handlePhotoChange = async (newPhotoUrl) => {
-    setProfilePhoto(newPhotoUrl); // Yeni fotoğrafı hemen frontend'de güncelle
+    setProfilePhoto(newPhotoUrl);
 
     const token = localStorage.getItem("token");
     try {
@@ -225,8 +225,8 @@ const MenteeProfile = () => {
           phone,
           college,
           location,
-          skills: JSON.stringify(skills), // Array'i JSON string'e dönüştür
-          languages: JSON.stringify(languages), // Array'i JSON string'e dönüştür
+          skills: JSON.stringify(skills),
+          languages: JSON.stringify(languages),
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -241,95 +241,112 @@ const MenteeProfile = () => {
   
   return (
     <div className="mentee-profile-container">
-      <header>
-      </header>
+      <header></header>
 
       <main>
         <div className="mentee-profile-form">
           <h1 className="mentee-profile-title">Ayarlar</h1>
           <div className="all-settings-form">
-            <div className="photo-settings-card">
-              <ProfilePhotoUpload 
-              onPhotoChange = {handlePhotoChange}
-              profilePhoto = {profilePhoto}
-              />
-              <ProfileSettingsBar/>
-            </div>  
-          <div>
-            <div className="profile-settings-form">
-              <h2 className="profile-settings-form-title">Profil Ayarları</h2>
-              <h6 className="required-info-text">Yanında * sembolü olan yerlerin doldurulması zorunludur.</h6>
-              <div className="profile-settings-infos">
-                <div className="profile-settings-name-surname">
-                  <div className="profile-settings-name">
-                    <label className="profile-settings-name-label">İsim</label>
-                    <span className="span-required"> *</span>
-                    <div className="profile-settings-name-input-div">
-                      <input 
-                        type="text" 
-                        className="profile-settings-name-input" 
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="John"
+            <div className="left-column">
+              <div className="photo-settings-card">
+                <ProfilePhotoUpload
+                  onPhotoChange={handlePhotoChange}
+                  profilePhoto={profilePhoto}
+                />
+              </div>
+              <ProfileSettingsBar />
+            </div>
+            <div className="right-column">
+              <div className="profile-settings-form">
+                <h2 className="profile-settings-form-title">Profil Ayarları</h2>
+                <h6 className="required-info-text">
+                  Yanında * sembolü olan yerlerin doldurulması zorunludur.
+                </h6>
+                <div className="profile-settings-infos">
+                  <div className="profile-settings-name-surname">
+                    <div className="profile-settings-name">
+                      <label className="profile-settings-name-label">
+                        İsim
+                      </label>
+                      <span className="span-required"> *</span>
+                      <div className="profile-settings-name-input-div">
+                        <input
+                          type="text"
+                          className="profile-settings-name-input"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          placeholder="John"
+                        />
+                      </div>
+                    </div>
+                    <div className="profile-settings-surname">
+                      <label className="profile-settings-surname-label">
+                        Soyisim
+                      </label>
+                      <span className="span-required"> *</span>
+                      <div className="profile-settings-surname-input-div">
+                        <input
+                          type="text"
+                          className="profile-settings-surname-input"
+                          value={surname}
+                          onChange={(e) => setSurname(e.target.value)}
+                          placeholder="Doe"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bio Field */}
+                  <div className="profile-settings-bio">
+                    <label className="profile-settings-bio-label">
+                      Biyografi
+                    </label>
+                    <div className="profile-settings-bio-input-div">
+                      <input
+                        type="text"
+                        className="profile-settings-bio-input"
+                        value={bio}
+                        onChange={(e) => setBio(e.target.value)}
+                        placeholder="Biyografi..."
                       />
                     </div>
                   </div>
-                  <div className="profile-settings-surname">
-                    <label className="profile-settings-surname-label">Soyisim</label>
+
+                  {/* Phone Field */}
+                  <div className="profile-settings-phone">
+                    <label className="profile-settings-phone-label">
+                      Telefon Numarası
+                    </label>
                     <span className="span-required"> *</span>
-                    <div className="profile-settings-surname-input-div">
-                      <input 
-                        type="text" 
-                        className="profile-settings-surname-input" 
-                        value={surname}
-                        onChange={(e) => setSurname(e.target.value)}
-                        placeholder="Doe"
+                    <div className="profile-settings-phone-input-div">
+                      <input
+                        type="text"
+                        className="profile-settings-phone-input"
+                        value={phone}
+                        onChange={handlePhoneChange}
+                        placeholder="555 555 5555"
+                      />
+                      {phoneError && (
+                        <p style={{ color: "red", marginBottom: "20px" }}>
+                          {phoneError}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="profile-settings-college">
+                    <label className="profile-settings-college-label">
+                      Okuduğunuz/Mezun Olduğunuz Okul
+                    </label>
+                    <div className="profile-settings-college-input-div">
+                      <input
+                        type="text"
+                        value={college}
+                        className="profile-settings-college-input"
+                        onChange={(e) => setCollege(e.target.value)}
                       />
                     </div>
                   </div>
-                </div>
-
-                {/* Bio Field */}
-                <div className="profile-settings-bio">
-                  <label className="profile-settings-bio-label">Biyografi</label>
-                  <div className="profile-settings-bio-input-div">
-                    <input 
-                      type="text" 
-                      className="profile-settings-bio-input" 
-                      value={bio}
-                      onChange={(e) => setBio(e.target.value)}
-                      placeholder="Biyografi..."
-                    />
-                  </div>
-                </div>
-
-                {/* Phone Field */}
-                <div className="profile-settings-phone">
-                  <label className="profile-settings-phone-label">Telefon Numarası</label>
-                  <span className="span-required"> *</span>
-                  <div className="profile-settings-phone-input-div">
-                    <input 
-                      type="text" 
-                      className="profile-settings-phone-input" 
-                      value={phone}
-                      onChange={handlePhoneChange}  // handlePhoneChange fonksiyonu ile kontrol
-                      placeholder="555 555 5555"
-                    />
-                    {phoneError && <p style={{ color: 'red' }}>{phoneError}</p>} {/* Hata mesajı */}
-                  </div>
-                </div>
-
-                <div className="profile-settings-college">
-                  <label className="profile-settings-college-label">Okuduğunuz/Mezun Olduğunuz Okul</label>
-                  <div className="profile-settings-college-input-div">
-                    <input 
-                      type="text" 
-                      value={college}
-                      className="profile-settings-college-input"
-                      onChange={(e) => setCollege(e.target.value)}
-                    />
-                  </div>
-                </div>
 
                   <div className="profile-settings-location">
                     <div className="profile-settings-location-div">
@@ -350,27 +367,28 @@ const MenteeProfile = () => {
                       label="Yazılım Dilleri"
                     />
                   </div>
-                <div className="profile-settings-languages">
-                  <CustomDropdown
-                    options={languageOptions}
-                    selectedOptions={languages}
-                    setSelectedOptions={setLanguages}
-                    label="Bilinen Diller"
-                  />
-                </div>
+                  <div className="profile-settings-languages">
+                    <CustomDropdown
+                      options={languageOptions}
+                      selectedOptions={languages}
+                      setSelectedOptions={setLanguages}
+                      label="Bilinen Diller"
+                    />
+                  </div>
 
-                <div className="profile-settings-button-save-div">
-                  <button 
-                  type="button" 
-                  className="profile-settings-button-save" 
-                  onClick={handleSaveClick}>
-                    Kaydet
-                  </button>
+                  <div className="profile-settings-button-save-div">
+                    <button
+                      type="button"
+                      className="profile-settings-button-save"
+                      onClick={handleSaveClick}
+                    >
+                      Kaydet
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
         </div>
       </main>
     </div>

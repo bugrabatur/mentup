@@ -110,6 +110,9 @@
 .calendar-info {
   color: #8e9291;
   font-size: 13px;
+  margin-left: 16px;
+  align-self: center;
+  display: inline-block;
 }
 
 .today-column {
@@ -126,3 +129,49 @@
   color: #aaa !important;
   cursor: not-allowed !important;
 } */
+
+.calendar-info-mobile {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .simple-calendar {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important; /* Sadece takvim scrollanacak */
+    padding: 10px 0 0 0 !important; /* Yandan padding kaldır */
+  }
+
+  .calendar-controls {
+    width: 100% !important;
+    overflow-x: visible !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+    margin: 0 0 10px 0 !important;
+    padding: 0 8px !important; /* Yana biraz iç boşluk */
+  }
+
+  .calendar-controls button {
+    max-width: 90px !important;
+    font-size: 12px !important;
+    padding: 4px 0 !important;
+    margin: 0 2px 4px 0 !important;
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    width: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  .calendar-table-scroll {
+    width: 100vw !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px !important;
+  }
+
+  .calendar-table-scroll table {
+    min-width: 600px !important;
+    width: 600px !important;
+    margin: 0 auto;
+  }
+}

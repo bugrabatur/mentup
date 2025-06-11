@@ -95,21 +95,21 @@ const MentorAccountSettings = () => {
   
   return (
     <div className="account-settings-profile-container">
-      <header>
-      </header>
-
+      <header></header>
       <main>
         <div className="mentee-profile-form">
           <h1 className="mentee-profile-title">Ayarlar</h1>
           <div className="all-settings-form">
-            <div className="photo-settings-card">
-            <ProfilePhotoUpload 
-              onPhotoChange = {handlePhotoSave}
-              profilePhoto = {profilePhoto}
-              />
+            <div className="left-column">
+              <div className="photo-settings-card">
+                <ProfilePhotoUpload 
+                  onPhotoChange={handlePhotoSave}
+                  profilePhoto={profilePhoto}
+                />
+              </div>
               <ProfileSettingsBar />
             </div>
-            <div>
+            <div className="right-column">
               <div className="account-settings-form">
                 <h2 className="account-settings-form-title">Hesap Ayarları</h2>
                 <div className="account-settings-infos">
@@ -141,7 +141,6 @@ const MentorAccountSettings = () => {
                         {currentPasswordError}
                       </div>
                     )}
-
                   </div>
                   <div className="account-settings-new-password">
                     <label className="account-settings-new-password-label">
