@@ -29,14 +29,25 @@ const Login = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
+        credentials: "include", // Çerezleri göndermek için
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Bir hata oluştu.");
-      }
-
       const data = await response.json();
+
+      if (!response.ok) {
+      // 🔴 errorCode'lara göre frontend mesajı ayarla
+      if (data.errorCode === "validation_error") {
+        setMessage("Lütfen geçerli bir e-posta ve şifre giriniz.");
+      } else if (data.errorCode === "user_not_found") {
+        setMessage("Böyle bir kullanıcı bulunamadı.");
+      } else if (data.errorCode === "wrong_password") {
+        setMessage("Şifreniz hatalı.");
+      } else {
+        setMessage("Bilinmeyen bir hata oluştu.");
+      }
+      return;
+    }
+
       setMessage(data.message || "Giriş başarılı!");
 
       if (data.token) {

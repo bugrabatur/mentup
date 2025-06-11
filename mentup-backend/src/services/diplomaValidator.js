@@ -15,7 +15,7 @@ async function validateDiplomaInfo({ tc, name, surname, diploma_number }) {
     return { success: false, error: 'Soyisim uyuşmuyor.' };
   }  
 
-  if (record.diploma_number !== diploma_number) {
+  if (record.diploma_number.trim() !== diploma_number.trim()) {
     return { success: false, error: 'Diploma numarası uyuşmuyor' };
   }
 

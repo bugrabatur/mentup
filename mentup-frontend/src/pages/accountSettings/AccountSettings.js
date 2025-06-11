@@ -52,46 +52,66 @@ const AccountSettings = () => {
   };
 
   const handleSaveClick = async () => {
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
+  setPasswordError("");
+  setCurrentPasswordError("");
 
-    try {
-      const res = await axios.post("http://localhost:5001/accountSettings/checkPassword", {
-        currentPassword,
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+  try {
+    // 1. Mevcut şifre doğru mu?
+    const checkRes = await axios.post(
+      "http://localhost:5001/accountSettings/checkPassword",
+      { currentPassword },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-      if (res.data.isValid) {
-        if (newPassword.length < 6) {
-          setPasswordError("Yeni şifre en az 6 karakter olmalı.");
-          return;
-        }
-
-        if (newPassword !== confirmPassword) {
-          setPasswordError("Yeni şifreler eşleşmiyor.");
-          return;
-        }
-
-        setPasswordError(""); // Hata yoksa sıfırla
-
-        const updateRes = await axios.post("http://localhost:5001/accountSettings/changePassword", {
-          currentPassword,
-          newPassword,
-          confirmPassword
-        }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
-        alert("Şifre başarıyla güncellendi");
-      } else {
-        setCurrentPasswordError("Mevcut şifre yanlış.");
-      }
-
-    } catch (err) {
-      console.error("Şifre doğrulama hatası:", err.response?.data || err.message);
-      alert("Bir hata oluştu");
+    if (!checkRes.data.isValid) {
+      setCurrentPasswordError("Mevcut şifreniz hatalı.");
+      return;
     }
-  };
+
+    // 2. Yeni şifre kontrolleri (frontend tarafı)
+    if (newPassword.length < 6) {
+      setPasswordError("Yeni şifre en az 6 karakter olmalıdır.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Yeni şifreler eşleşmiyor.");
+      return;
+    }
+
+    // 3. Güncelleme isteği
+    const updateRes = await axios.post(
+      "http://localhost:5001/accountSettings/changePassword",
+      {
+        currentPassword,
+        newPassword,
+        confirmPassword,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    alert("Şifreniz başarıyla güncellendi.");
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+  } catch (err) {
+    console.error("🔴 Hata:", err.response?.data || err.message);
+    const errorCode = err.response?.data?.errorCode;
+
+    if (errorCode === "validation_error") {
+      setPasswordError("Lütfen şifre alanlarını doğru ve eksiksiz doldurun.");
+    } else if (errorCode === "wrong_current_password") {
+      setCurrentPasswordError("Mevcut şifreniz hatalı.");
+    } else if (errorCode === "user_not_found") {
+      alert("Kullanıcı bilgisi alınamadı.");
+    } else {
+      alert("Sunucuda bir hata oluştu. Lütfen tekrar deneyin.");
+    }
+  }
+};
   
   return (
     <div className="account-settings-profile-container">
@@ -102,14 +122,16 @@ const AccountSettings = () => {
         <div className="mentee-profile-form">
           <h1 className="mentee-profile-title">Ayarlar</h1>
           <div className="all-settings-form">
+          <div className="left-column">
             <div className="photo-settings-card">
             <ProfilePhotoUpload 
               onPhotoChange = {handlePhotoSave}
               profilePhoto = {profilePhoto}
               />
+            </div>
               <ProfileSettingsBar />
             </div>
-            <div>
+            <div className="right-column">
               <div className="account-settings-form">
                 <h2 className="account-settings-form-title">Hesap Ayarları</h2>
                 <div className="account-settings-infos">

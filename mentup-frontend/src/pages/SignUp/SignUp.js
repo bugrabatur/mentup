@@ -44,6 +44,7 @@ const Signup = () => {
           surname,
           email,
           password,
+          passwordAgain,
         })
       });
   

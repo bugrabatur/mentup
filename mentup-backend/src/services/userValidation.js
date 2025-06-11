@@ -23,6 +23,10 @@ const signupValidation = Joi.object({
         'string.max': 'Şifre en fazla 20 karakter olabilir.',
         'any.required': 'Şifre alanı zorunludur.',
     }),
+    passwordAgain: Joi.any().valid(Joi.ref('password')).required().messages({
+        'any.only': 'Şifreler eşleşmiyor.',
+        'any.required': 'Şifre tekrar alanı zorunludur.',
+    }),
 });
 
 // Login Validation Schema
@@ -38,18 +42,17 @@ const loginValidation = Joi.object({
 });
 
 const accountSettingsValidation = Joi.object({
-    email : Joi.string().email().required().messages({
-        'string.email': 'Geçerli bir e-posta adresi giriniz.',
-        'any.required': 'E-posta adresi zorunludur.',
-    }),
-    password : Joi.string().min(6).required().messages({
-        'string.min': 'Şifre en az 6 karakter olmalıdır.',
-        'any.required': 'Şifre alanı zorunludur.',
-    }),
-    newPassword : Joi.string().min(6).required().messages({
-        'string.min': 'Şifre en az 6 karakter olmalıdır.',
-        'any.required': 'Şifre alanı zorunludur.',
-    }),
-}) 
+  currentPassword: Joi.string().required().messages({
+    'any.required': 'Mevcut şifre zorunludur.',
+  }),
+  newPassword: Joi.string().min(6).required().messages({
+    'string.min': 'Yeni şifre en az 6 karakter olmalıdır.',
+    'any.required': 'Yeni şifre zorunludur.',
+  }),
+  confirmPassword: Joi.any().valid(Joi.ref('newPassword')).required().messages({
+    'any.only': 'Yeni şifreler eşleşmiyor.',
+    'any.required': 'Şifre tekrar alanı zorunludur.',
+  }),
+});
 
 module.exports = { signupValidation, loginValidation, accountSettingsValidation };
